@@ -336,10 +336,11 @@ export function SegregationSandbox() {
         </div>
 
         <div className="border-t border-border pt-4">
-          <p className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
             Διαχωρισμός
             <Popover
               label="ⓘ"
+              ariaLabel="Πηγή και επεξήγηση"
               align="end"
               triggerClassName="no-underline text-muted-foreground"
             >
@@ -356,7 +357,7 @@ export function SegregationSandbox() {
               </a>
               .
             </Popover>
-          </p>
+          </div>
           <p className="mt-1 font-display text-4xl">{Math.round(seg * 100)}%</p>
           <p className="mt-1 text-xs text-muted-foreground">
             γείτονες ίδιας ομάδας, κατά μέσο όρο

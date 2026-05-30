@@ -13,11 +13,16 @@ type Coords = { top: number; left: number; width: number };
  *
  *   <Popover label="ⓘ">Σύντομη εξήγηση. <a href="…">Πηγή</a></Popover>
  */
+// Broadcast when one popover opens so any other open popover closes itself.
+// Keeps adjacent citations (e.g. a row of myth cards) from stacking open.
+const OPEN_EVENT = "wp-popover-open";
+
 export function Popover({
   label,
   children,
   triggerClassName,
   align = "center",
+  ariaLabel,
 }: {
   /** Content of the trigger button (text or icon). */
   label: React.ReactNode;
@@ -26,6 +31,8 @@ export function Popover({
   triggerClassName?: string;
   /** Preferred horizontal anchor before viewport clamping. */
   align?: "center" | "start" | "end";
+  /** Accessible name for an icon-only trigger (e.g. "ⓘ"). */
+  ariaLabel?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [coords, setCoords] = useState<Coords | null>(null);
@@ -64,30 +71,47 @@ export function Popover({
       }
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+    // Close when another popover announces it just opened.
+    const onOtherOpen = (e: Event) => {
+      if ((e as CustomEvent).detail !== id) setOpen(false);
     };
     window.addEventListener("scroll", onScroll, true);
     window.addEventListener("resize", onScroll);
     document.addEventListener("click", onDoc);
     document.addEventListener("keydown", onKey);
+    window.addEventListener(OPEN_EVENT, onOtherOpen);
     return () => {
       window.removeEventListener("scroll", onScroll, true);
       window.removeEventListener("resize", onScroll);
       document.removeEventListener("click", onDoc);
       document.removeEventListener("keydown", onKey);
+      window.removeEventListener(OPEN_EVENT, onOtherOpen);
     };
-  }, [open, align]);
+  }, [open, align, id]);
 
   return (
     <>
       <button
         ref={triggerRef}
         type="button"
+        aria-label={ariaLabel}
         aria-expanded={open}
         aria-controls={id}
         onClick={(e) => {
           e.stopPropagation();
-          setOpen((o) => !o);
+          setOpen((o) => {
+            const next = !o;
+            if (next)
+              window.dispatchEvent(
+                new CustomEvent(OPEN_EVENT, { detail: id }),
+              );
+            return next;
+          });
         }}
         className={cn(
           "inline-flex items-center text-accent underline decoration-dotted underline-offset-2 transition-colors hover:text-ink",

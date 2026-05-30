@@ -38,7 +38,10 @@ function Card({ scenario }: { scenario: Scenario }) {
               correct ? "text-accent" : "text-muted-foreground",
             )}
           >
-            {correct ? "Σωστά." : "Όχι ακριβώς."} Συνέβη στην {scenario.answer}.
+            {correct ? "Σωστά." : "Όχι ακριβώς."}{" "}
+            {scenario.answer === "Ελλάδα"
+              ? "Συνέβη στην Ελλάδα."
+              : "Συνέβη αλλού."}
           </p>
           <p className="mt-3 leading-relaxed">{scenario.reveal}</p>
           {scenario.source && (

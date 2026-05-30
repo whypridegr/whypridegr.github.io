@@ -29,8 +29,18 @@ export function ReflectiveComment() {
         {reflections.map((r, i) => (
           <li key={i} className="rounded-lg border border-border bg-card p-5">
             <div className="flex items-center gap-3">
-              <div className="flex size-9 items-center justify-center rounded-full bg-secondary font-display text-sm">
-                {r.initial}
+              {/* Generic placeholder avatar — these are invented names, not
+                  real people, so we don't dress them up with initials. */}
+              <div className="flex size-9 items-center justify-center rounded-full bg-secondary text-muted-foreground">
+                <svg
+                  viewBox="0 0 24 24"
+                  className="size-5"
+                  fill="currentColor"
+                  aria-hidden
+                >
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 20c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5Z" />
+                </svg>
               </div>
               <span className="text-sm text-muted-foreground">{r.author}</span>
             </div>

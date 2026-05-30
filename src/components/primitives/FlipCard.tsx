@@ -37,9 +37,6 @@ export function FlipCard({ item }: { item: Myth }) {
             Πραγματικότητα
           </span>
           <p className="mt-4 text-base leading-relaxed">{item.reality}</p>
-          {item.source && (
-            <span className="mt-auto text-xs opacity-60">{item.source}</span>
-          )}
         </Face>
       </div>
     </button>

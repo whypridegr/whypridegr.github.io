@@ -3,6 +3,8 @@ import { cn } from "@/lib/utils";
 import { Link } from "@/components/site/Link";
 import { Accordion } from "@/components/primitives/Accordion";
 import { FlipCard } from "@/components/primitives/FlipCard";
+import { Popover } from "@/components/primitives/Popover";
+import { CiteList } from "@/components/primitives/CiteList";
 import { Reveal } from "@/components/primitives/Reveal";
 import { GuessGreece } from "@/components/interactives/GuessGreece";
 import { ReframeToggle } from "@/components/interactives/ReframeToggle";
@@ -36,7 +38,23 @@ export function HomeContent() {
       <Section id="mythoi" title="Γύρισέ τες. Δες την άλλη πλευρά.">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {myths.map((m, i) => (
-            <FlipCard key={i} item={m} />
+            <div key={i} className="flex flex-col gap-2">
+              <FlipCard item={m} />
+              {/* Reserve the citation row on every card so equal-height
+                  cards stay aligned even if a myth has no cite. */}
+              <div className="min-h-5 text-xs">
+                {m.cite && (
+                  <Popover
+                    label="ⓘ πηγές"
+                    ariaLabel="Πηγές και τεκμηρίωση"
+                    align="start"
+                    triggerClassName="no-underline text-muted-foreground hover:text-accent"
+                  >
+                    <CiteList cite={m.cite} />
+                  </Popover>
+                )}
+              </div>
+            </div>
           ))}
         </div>
       </Section>

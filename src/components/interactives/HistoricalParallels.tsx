@@ -2,6 +2,8 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import type { Parallel } from "@/content/parallels";
 import { parallels } from "@/content/parallels";
+import { Popover } from "@/components/primitives/Popover";
+import { CiteList } from "@/components/primitives/CiteList";
 
 const TILTS = [-0.7, 0.5, -0.4];
 
@@ -28,7 +30,19 @@ function Clipping({ parallel, tilt }: { parallel: Parallel; tilt: number }) {
       <article className="paper torn-bottom px-6 pb-10 pt-6 md:px-10 md:pb-12 md:pt-8">
         {/* dateline / masthead */}
         <div className="flex items-center justify-between border-b border-[#c3b79b] pb-2 font-sans text-[0.66rem] uppercase tracking-[0.22em] text-[#7d7257]">
-          <span>Τότε</span>
+          <div className="flex items-center gap-2">
+            Τότε
+            {parallel.source && (
+              <Popover
+                label="ⓘ"
+                ariaLabel="Ιστορική πηγή"
+                align="start"
+                triggerClassName="no-underline text-[#9b3520]"
+              >
+                <CiteList cite={parallel.source} />
+              </Popover>
+            )}
+          </div>
           <span>{parallel.era}</span>
         </div>
 
@@ -75,6 +89,19 @@ function Clipping({ parallel, tilt }: { parallel: Parallel; tilt: number }) {
                 <p className="mt-2 text-xl leading-relaxed md:text-2xl">
                   {parallel.modern}
                 </p>
+                {parallel.greek && (
+                  <div className="mt-4 flex items-center gap-2 font-sans text-[0.66rem] uppercase tracking-[0.22em] text-[#7d7257]">
+                    Ελλάδα, σήμερα
+                    <Popover
+                      label="ⓘ"
+                      ariaLabel="Σύγχρονη ελληνική πηγή"
+                      align="start"
+                      triggerClassName="no-underline text-[#9b3520]"
+                    >
+                      <CiteList cite={parallel.greek} />
+                    </Popover>
+                  </div>
+                )}
               </motion.div>
             </motion.div>
           )}

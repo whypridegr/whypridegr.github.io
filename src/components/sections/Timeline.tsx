@@ -1,4 +1,6 @@
 import { Reveal } from "@/components/primitives/Reveal";
+import { Popover } from "@/components/primitives/Popover";
+import { CiteList } from "@/components/primitives/CiteList";
 import { milestones } from "@/content/timeline";
 
 export function Timeline() {
@@ -20,9 +22,19 @@ export function Timeline() {
               </span>
             </div>
             <p className="mt-1 font-display text-xl">{m.title}</p>
-            <p className="mt-2 leading-relaxed text-muted-foreground reading-width">
+            <div className="mt-2 leading-relaxed text-muted-foreground reading-width">
               {m.text}
-            </p>
+              {m.cite && (
+                <Popover
+                  label="ⓘ"
+                  ariaLabel="Πηγή και νομοθεσία"
+                  align="start"
+                  triggerClassName="ml-2 no-underline text-muted-foreground"
+                >
+                  <CiteList cite={m.cite} />
+                </Popover>
+              )}
+            </div>
           </li>
         </Reveal>
       ))}

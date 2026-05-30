@@ -37,6 +37,6 @@ export const sources: Source[] = [
   {
     org: "Bustos et al. (2021)",
     title: "Regret after Gender-Affirmation Surgery: A Systematic Review",
-    url: "https://pubmed.ncbi.nlm.nih.gov/33779860/",
+    url: "https://pubmed.ncbi.nlm.nih.gov/33968550/",
   },
 ];

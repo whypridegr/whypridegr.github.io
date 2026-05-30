@@ -32,8 +32,12 @@ export const faq: FaqItem[] = [
     long: "Η Αμερικανική Ψυχολογική Εταιρεία και η Αμερικανική Ακαδημία Παιδιατρικής έχουν επανειλημμένα δηλώσει ότι παιδιά σε ΛΟΑΤΚΙ+ οικογένειες έχουν τα ίδια αναπτυξιακά αποτελέσματα. Αυτό που τα βλάπτει είναι το στίγμα, όχι η ορατότητα.",
     sources: [
       {
-        label: "Αμερικανική Ψυχολογική Εταιρεία: Position Statement",
-        url: "https://www.apa.org",
+        label: "AAP, Pediatrics (2013): παιδιά σε ΛΟΑΤΚΙ+ οικογένειες",
+        url: "https://publications.aap.org/pediatrics/article/131/4/e1374/31926",
+      },
+      {
+        label: "APA: Sexual Orientation & Gender Diversity",
+        url: "https://www.apa.org/topics/lgbtq",
       },
     ],
   },
@@ -48,7 +52,12 @@ export const faq: FaqItem[] = [
     short:
       "Είναι ορατότητα. Για όποιον δεν έχει αντιμετωπίσει αορατότητα, μοιάζει υπερβολή. Για όποιον την έχει ζήσει, είναι ανάσα.",
     long: "Το Pride ξεκίνησε ως [διαμαρτυρία (Stonewall, 1969)](#istoria) και παραμένει εν μέρει διαμαρτυρία. Σε χώρες όπου οι ομόφυλες σχέσεις είναι ακόμη ποινικοποιημένες (περίπου 64 χώρες παγκοσμίως), μια πορεία δεν είναι γιορτή. Είναι ρίσκο.",
-    sources: [{ label: "ILGA World Map (2024)", url: "https://ilga.org" }],
+    sources: [
+      {
+        label: "ILGA World: Maps of criminalisation",
+        url: "https://database.ilga.org/maps-sexual-orientation-laws",
+      },
+    ],
   },
   {
     q: "Γιατί τόσο επιδεικτικό; Κρατήστε το ιδιωτικό.",
