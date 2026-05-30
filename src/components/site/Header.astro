@@ -21,7 +21,7 @@ const links = [
     aria-label="Άνοιγμα μενού πλοήγησης"
     class="pointer-events-auto fixed left-4 top-4 z-50 inline-flex items-center justify-center p-2 transition-all duration-300"
   >
-    <span id="wp-bar" class="block h-2 w-8 rounded-full pride-rule"></span>
+    <span id="wp-bar" class="block h-1.5 w-7 rounded-full pride-rule"></span>
   </button>
 
   <nav
@@ -52,11 +52,12 @@ const links = [
 </div>
 
 <style>
-  /* Scrolling down: rainbow slides to the far-left edge and fades, so it stays
-     out of the reading column. Theme control lifts away. */
+  /* Scrolling down: both controls lift away entirely, so nothing sits over the
+     reading column. They return on scroll-up. */
   #wp-menu-btn.wp-condensed {
-    transform: translateX(-16px);
-    opacity: 0.5;
+    opacity: 0;
+    transform: translateY(-12px);
+    pointer-events: none;
   }
   #wp-theme-wrap.wp-collapsed {
     opacity: 0;
