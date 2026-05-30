@@ -331,21 +331,54 @@ function Section({
 // A single sticky overlay control: tap to glide to the next section, anytime —
 // long section or not. Hides itself near the very bottom of the page.
 function NextSectionButton() {
-  const [hidden, setHidden] = useState(false);
+  // Show only once the visitor has engaged with the section they're currently
+  // reading — and only if there's a next one. Sticky, but never pushy.
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => {
+    const interacted = new Set<string>();
+    const sections = () =>
+      Array.from(document.querySelectorAll<HTMLElement>("section[id]"));
+
+    const currentSection = () => {
+      let cur: HTMLElement | null = null;
+      for (const s of sections()) {
+        if (s.getBoundingClientRect().top <= 140) cur = s;
+      }
+      return cur;
+    };
+
+    const hasNext = (cur: HTMLElement | null) => {
+      if (!cur) return false;
+      const list = sections();
+      const idx = list.indexOf(cur);
+      return idx >= 0 && idx < list.length - 1;
+    };
+
+    const evaluate = () => {
       const nearBottom =
         window.innerHeight + window.scrollY >=
         document.body.scrollHeight - 240;
-      setHidden(nearBottom);
+      const cur = currentSection();
+      setVisible(!!cur && interacted.has(cur.id) && hasNext(cur) && !nearBottom);
     };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+
+    const onClick = (e: MouseEvent) => {
+      const id = (e.target as HTMLElement)?.closest?.("section[id]")?.id;
+      if (id) {
+        interacted.add(id);
+        evaluate();
+      }
+    };
+
+    document.addEventListener("click", onClick, true);
+    window.addEventListener("scroll", evaluate, { passive: true });
+    window.addEventListener("resize", evaluate);
+    evaluate();
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      document.removeEventListener("click", onClick, true);
+      window.removeEventListener("scroll", evaluate);
+      window.removeEventListener("resize", evaluate);
     };
   }, []);
 
@@ -369,13 +402,13 @@ function NextSectionButton() {
       type="button"
       onClick={goNext}
       aria-label="Επόμενη ενότητα"
-      aria-hidden={hidden}
-      tabIndex={hidden ? -1 : 0}
+      aria-hidden={!visible}
+      tabIndex={visible ? 0 : -1}
       className={cn(
         "fixed bottom-5 left-1/2 z-30 inline-flex size-11 -translate-x-1/2 items-center justify-center rounded-full border border-border bg-paper/70 text-muted-foreground shadow-lg backdrop-blur transition-all duration-300 hover:text-ink",
-        hidden
-          ? "pointer-events-none translate-y-6 opacity-0"
-          : "opacity-100",
+        visible
+          ? "opacity-100"
+          : "pointer-events-none translate-y-6 opacity-0",
       )}
     >
       <svg

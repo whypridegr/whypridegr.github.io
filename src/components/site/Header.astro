@@ -19,9 +19,9 @@ const links = [
     aria-expanded="false"
     aria-controls="wp-menu"
     aria-label="Άνοιγμα μενού πλοήγησης"
-    class="pointer-events-auto fixed left-3 top-3 z-50 inline-flex items-center justify-center rounded-full bg-paper/70 p-2.5 shadow-sm backdrop-blur transition-colors hover:bg-secondary"
+    class="pointer-events-auto fixed left-4 top-4 z-50 inline-flex items-center justify-center p-2 transition-all duration-300"
   >
-    <span id="wp-bar" class="block h-2 w-8 rounded-full pride-rule transition-transform duration-300"></span>
+    <span id="wp-bar" class="block h-2 w-8 rounded-full pride-rule"></span>
   </button>
 
   <nav
@@ -45,16 +45,18 @@ const links = [
 
   <div
     id="wp-theme-wrap"
-    class="pointer-events-auto fixed right-3 top-3 z-50 rounded-full bg-paper/70 shadow-sm backdrop-blur transition-all duration-300"
+    class="pointer-events-auto fixed right-3 top-4 z-50 transition-all duration-300"
   >
     <ThemeToggle />
   </div>
 </div>
 
 <style>
-  /* Scrolling down: rainbow tips to vertical, theme control lifts away. */
-  #wp-menu-btn.wp-condensed #wp-bar {
-    transform: rotate(90deg);
+  /* Scrolling down: rainbow slides to the far-left edge and fades, so it stays
+     out of the reading column. Theme control lifts away. */
+  #wp-menu-btn.wp-condensed {
+    transform: translateX(-16px);
+    opacity: 0.5;
   }
   #wp-theme-wrap.wp-collapsed {
     opacity: 0;
