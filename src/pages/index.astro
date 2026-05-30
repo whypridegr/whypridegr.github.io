@@ -1,0 +1,12 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { HomeContent } from "../components/content/HomeContent";
+---
+
+<Layout
+  title="WhyPride.gr — Γιατί υπάρχει Pride;"
+  description="Ένας ήσυχος, τεκμηριωμένος οδηγός για την αντίληψη του Pride στην Ελλάδα. Ερωτήσεις, μύθοι, ιστορίες — χωρίς ηθικολογία."
+  ogDescription="Ερωτήσεις, μύθοι και πραγματικές ιστορίες, με πηγές. Χωρίς δράματα, χωρίς γκουρού."
+>
+  <HomeContent client:load />
+</Layout>

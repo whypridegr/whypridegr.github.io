@@ -1,0 +1,65 @@
+---
+import "../styles/global.css";
+import Header from "../components/site/Header.astro";
+import Footer from "../components/site/Footer.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  ogTitle?: string;
+  ogDescription?: string;
+}
+
+const {
+  title,
+  description,
+  ogTitle = title,
+  ogDescription = description,
+} = Astro.props;
+
+const ogImage =
+  "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/39ffc52f-1eac-44b5-a11f-a5eb989f6e67/id-preview-6fdca055--8639a017-f487-447b-9f11-33ee27460728.lovable.app-1779995919950.png";
+---
+
+<!doctype html>
+<html lang="el">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light dark" />
+    <title>{title}</title>
+
+    <meta property="og:title" content={ogTitle} />
+    <meta property="og:description" content={ogDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={ogTitle} />
+    <meta name="twitter:description" content={ogDescription} />
+    <meta name="twitter:image" content={ogImage} />
+
+    {/* No-flash theme: runs before paint, dependency-free, localStorage guarded. */}
+    <script is:inline>
+      (function () {
+        try {
+          var saved = localStorage.getItem("wp-theme");
+          var prefersDark = window.matchMedia(
+            "(prefers-color-scheme: dark)"
+          ).matches;
+          var dark = saved ? saved === "dark" : prefersDark;
+          var el = document.documentElement;
+          el.classList.toggle("dark", dark);
+          el.style.colorScheme = dark ? "dark" : "light";
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

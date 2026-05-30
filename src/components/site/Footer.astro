@@ -1,0 +1,46 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-32 border-t border-border">
+  <div class="mx-auto max-w-6xl px-6 py-16">
+    <div class="pride-rule h-px w-full mb-12 opacity-60"></div>
+    <div class="grid gap-12 md:grid-cols-3">
+      <div>
+        <p class="font-display text-2xl leading-tight">WhyPride.gr</p>
+        <p class="mt-3 text-sm text-muted-foreground reading-width">
+          Ένας ήσυχος, τεκμηριωμένος οδηγός με μικρές δοκιμασίες για την αντίληψη του Pride,
+          χωρίς δράματα, χωρίς ηθικολογία.
+        </p>
+      </div>
+
+      <div>
+        <p class="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          Πλοήγηση
+        </p>
+        <ul class="mt-4 space-y-2 text-sm">
+          <li><a href="/" class="hover:text-accent">Αρχική</a></li>
+          <li><a href="/glossary" class="hover:text-accent">Γλωσσάρι</a></li>
+          <li><a href="/sources" class="hover:text-accent">Πηγές</a></li>
+          <li><a href="/about" class="hover:text-accent">Σχετικά</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          Επικοινωνία
+        </p>
+        <p class="mt-4 text-sm text-muted-foreground">
+          Στείλε μας: <a href="mailto:whypridegr@gmail.com" class="text-ink">whypridegr@gmail.com</a>
+        </p>
+        <p class="mt-0 text-sm text-muted-foreground">
+        Έχεις παρατήρηση, διόρθωση; <a href="mailto:whypridegr@gmail.com" class="text-ink">Γράψε το εδώ.</a>
+        </p>
+      </div>
+    </div>
+
+    <p class="mt-16 text-xs text-muted-foreground">
+      © {year} WhyPride.gr | Με αγάπη και συμπερίληψη
+    </p>
+  </div>
+</footer>

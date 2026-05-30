@@ -1,0 +1,22 @@
+---
+import ThemeToggle from "./ThemeToggle.astro";
+---
+
+<header
+  class="sticky top-0 z-40 backdrop-blur-md bg-paper/80 border-b border-border"
+>
+  <div
+    class="mx-auto max-w-6xl px-6 flex items-center justify-between h-16"
+  >
+    <a href="/" class="flex items-center gap-3 group" aria-label="WhyPride αρχική">
+      <span
+        class="h-2 w-8 pride-rule rounded-full transition-all duration-300 group-hover:w-12"
+      ></span>
+      <span class="font-display text-xl">WhyPride.gr</span>
+    </a>
+
+    <nav aria-label="Κύρια πλοήγηση" class="flex items-center gap-1 md:gap-2 text-sm">
+      <ThemeToggle />
+    </nav>
+  </div>
+</header>

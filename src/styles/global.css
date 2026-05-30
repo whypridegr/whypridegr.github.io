@@ -1,0 +1,230 @@
+@import "tailwindcss";
+
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-display: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-rule: var(--rule);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-pride-1: var(--pride-1);
+  --color-pride-2: var(--pride-2);
+  --color-pride-3: var(--pride-3);
+  --color-pride-4: var(--pride-4);
+  --color-pride-5: var(--pride-5);
+  --color-pride-6: var(--pride-6);
+}
+
+:root {
+  --radius: 0.5rem;
+  --header-height: 4rem;
+
+  /* Editorial calm palette — light */
+  --paper: oklch(0.985 0.005 90);
+  --ink: oklch(0.18 0.02 270);
+  --ink-muted: oklch(0.45 0.02 270);
+  --rule: oklch(0.88 0.01 90);
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: oklch(1 0 0);
+  --card-foreground: var(--ink);
+  --popover: oklch(1 0 0);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: oklch(0.95 0.008 90);
+  --secondary-foreground: var(--ink);
+  --muted: oklch(0.95 0.008 90);
+  --muted-foreground: var(--ink-muted);
+  --accent: oklch(0.55 0.13 275);
+  --accent-foreground: oklch(1 0 0);
+  --destructive: oklch(0.55 0.22 25);
+  --destructive-foreground: oklch(1 0 0);
+  --border: var(--rule);
+  --input: var(--rule);
+  --ring: oklch(0.55 0.13 275);
+
+  /* Pride spectrum — used sparingly */
+  --pride-1: oklch(0.62 0.22 25);
+  --pride-2: oklch(0.72 0.18 55);
+  --pride-3: oklch(0.85 0.16 95);
+  --pride-4: oklch(0.62 0.17 145);
+  --pride-5: oklch(0.55 0.18 250);
+  --pride-6: oklch(0.5 0.2 305);
+}
+
+/* Editorial calm palette — dark (added for the theme toggle) */
+.dark {
+  --paper: oklch(0.17 0.015 270);
+  --ink: oklch(0.96 0.006 90);
+  --ink-muted: oklch(0.72 0.018 270);
+  --rule: oklch(0.3 0.012 270);
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: oklch(0.215 0.016 270);
+  --card-foreground: var(--ink);
+  --popover: oklch(0.215 0.016 270);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: oklch(0.26 0.014 270);
+  --secondary-foreground: var(--ink);
+  --muted: oklch(0.26 0.014 270);
+  --muted-foreground: var(--ink-muted);
+  --accent: oklch(0.72 0.13 280);
+  --accent-foreground: oklch(0.16 0.02 270);
+  --destructive: oklch(0.62 0.2 25);
+  --destructive-foreground: oklch(0.16 0.02 270);
+  --border: var(--rule);
+  --input: var(--rule);
+  --ring: oklch(0.72 0.13 280);
+
+  --pride-1: oklch(0.68 0.2 25);
+  --pride-2: oklch(0.76 0.16 55);
+  --pride-3: oklch(0.86 0.15 95);
+  --pride-4: oklch(0.68 0.16 145);
+  --pride-5: oklch(0.64 0.17 250);
+  --pride-6: oklch(0.62 0.19 305);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* No accidental sideways scroll on mobile; clip (not hidden) keeps the
+       sticky header working. */
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+
+  ::selection {
+    background: color-mix(in oklch, var(--accent) 25%, transparent);
+  }
+
+  /* Anchored sections clear the sticky header on hash jumps, CTA clicks,
+     keyboard nav and native anchor scrolls. */
+  section[id] {
+    scroll-margin-top: calc(var(--header-height) + 1rem);
+  }
+}
+
+@layer utilities {
+  /* System serif for the newspaper-clipping look (has Greek glyphs, no webfont) */
+  .newsprint {
+    font-family: Georgia, "Times New Roman", "Droid Serif", serif;
+  }
+
+  /* Real-paper newsprint: warm cream + faint fractal-noise grain. Fixed colours
+     (a physical clipping looks the same in light & dark). */
+  .paper {
+    background-color: #f1e9d8;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+    color: #2b2620;
+  }
+
+  /* Hand-torn bottom edge (fixed ~14px torn strip, masked so the drop-shadow
+     follows the tear). */
+  .torn-bottom {
+    -webkit-mask:
+      linear-gradient(#000, #000) top left / 100% calc(100% - 13px) no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='10' preserveAspectRatio='none' viewBox='0 0 100 10'%3E%3Cpath fill='black' d='M0 0 H100 V4 L96 7 L92 3 L88 8 L84 5 L80 9 L75 4 L70 8 L65 5 L60 9 L55 4 L50 8 L45 5 L40 9 L35 4 L30 8 L25 5 L20 9 L15 4 L10 8 L5 5 L0 7 Z'/%3E%3C/svg%3E")
+        bottom left / 100% 14px no-repeat;
+    mask:
+      linear-gradient(#000, #000) top left / 100% calc(100% - 13px) no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='10' preserveAspectRatio='none' viewBox='0 0 100 10'%3E%3Cpath fill='black' d='M0 0 H100 V4 L96 7 L92 3 L88 8 L84 5 L80 9 L75 4 L70 8 L65 5 L60 9 L55 4 L50 8 L45 5 L40 9 L35 4 L30 8 L25 5 L20 9 L15 4 L10 8 L5 5 L0 7 Z'/%3E%3C/svg%3E")
+        bottom left / 100% 14px no-repeat;
+  }
+
+  .reading-width {
+    max-width: 42rem;
+  }
+  .wide-width {
+    max-width: 72rem;
+  }
+
+  .pride-rule {
+    background: linear-gradient(
+      to right,
+      var(--pride-1),
+      var(--pride-2),
+      var(--pride-3),
+      var(--pride-4),
+      var(--pride-5),
+      var(--pride-6)
+    );
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 600ms ease,
+      transform 600ms ease;
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+    * {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
