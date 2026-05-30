@@ -215,7 +215,7 @@ export function HistoricalParallels() {
           <div
             ref={backdropRef}
             onClick={close}
-            className="fixed inset-0 z-40 bg-ink/55 backdrop-blur-sm"
+            className="fixed inset-0 z-[60] bg-ink/85 backdrop-blur-md"
             aria-hidden
           />
           <div
@@ -223,7 +223,7 @@ export function HistoricalParallels() {
             role="dialog"
             aria-modal="true"
             aria-label={`Τότε και σήμερα: ${current.against}`}
-            className="fixed left-1/2 top-1/2 z-50 max-h-[85vh] w-[min(92vw,640px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto"
+            className="fixed left-1/2 top-1/2 z-[61] max-h-[88vh] w-[min(92vw,620px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-sm shadow-2xl"
           >
             <article className="paper px-6 pb-10 pt-6 md:px-12 md:pb-14 md:pt-10">
               <div className="flex items-center justify-between border-b border-[#c3b79b] pb-2 font-sans text-[0.66rem] uppercase tracking-[0.22em] text-[#7d7257]">
