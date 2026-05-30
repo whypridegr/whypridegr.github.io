@@ -252,7 +252,7 @@ function Hero() {
           Γιατί υπάρχει Pride;
         </h1>
         <p className="mt-8 max-w-xl text-lg md:text-xl text-muted-foreground leading-relaxed">
-          Έλα να το δούμε ψύχραιμα και να προβληματιστούμε.
+          Έλα να το δούμε ψύχραιμα.
         </p>
         <div className="mt-10 flex flex-wrap gap-3">
           <a
