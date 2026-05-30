@@ -33,30 +33,13 @@
     el.classList.toggle("dark", dark);
     el.style.colorScheme = dark ? "dark" : "light";
     btn?.setAttribute("aria-pressed", String(dark));
-    try {
-      localStorage.setItem("wp-theme", theme);
-    } catch (e) {
-      /* storage unavailable */
-    }
   };
 
   btn?.setAttribute("aria-pressed", String(isDark()));
+  // Manual flip for the current session (not persisted).
   btn?.addEventListener("click", () => apply(isDark() ? "light" : "dark"));
 
-  // Follow the device theme live — but only while the visitor hasn't made an
-  // explicit choice (no saved preference). Once they toggle, we respect it.
+  // Default and live behaviour follow the device theme.
   const mq = window.matchMedia("(prefers-color-scheme: dark)");
-  mq.addEventListener("change", (e) => {
-    let saved = null;
-    try {
-      saved = localStorage.getItem("wp-theme");
-    } catch (err) {
-      /* storage unavailable */
-    }
-    if (saved) return;
-    const dark = e.matches;
-    document.documentElement.classList.toggle("dark", dark);
-    document.documentElement.style.colorScheme = dark ? "dark" : "light";
-    btn?.setAttribute("aria-pressed", String(dark));
-  });
+  mq.addEventListener("change", (e) => apply(e.matches ? "dark" : "light"));
 </script>

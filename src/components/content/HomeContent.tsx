@@ -26,7 +26,10 @@ export function HomeContent() {
       <Hero />
 
       {/* — Questions first: the thing people actually come with — */}
-      <Section id="erotiseis" title="Δύσκολες ερωτήσεις και οι απαντήσεις τους.">
+      <Section
+        id="erotiseis"
+        title="Δύσκολες ερωτήσεις και οι απαντήσεις τους."
+      >
         <Accordion items={faq} initialVisible={4} />
       </Section>
 
@@ -245,7 +248,6 @@ function Hero() {
   return (
     <section className="relative">
       <div className="mx-auto max-w-6xl px-6 pt-24 md:pt-32 pb-20 md:pb-28">
-        <div className="pride-rule h-1 w-16 rounded-full" />
         <h1 className="mt-8 font-display text-5xl md:text-7xl lg:text-8xl leading-[1.02] tracking-tight reading-width">
           Γιατί υπάρχει Pride;
         </h1>
@@ -357,10 +359,11 @@ function NextSectionButton() {
 
     const evaluate = () => {
       const nearBottom =
-        window.innerHeight + window.scrollY >=
-        document.body.scrollHeight - 240;
+        window.innerHeight + window.scrollY >= document.body.scrollHeight - 240;
       const cur = currentSection();
-      setVisible(!!cur && interacted.has(cur.id) && hasNext(cur) && !nearBottom);
+      setVisible(
+        !!cur && interacted.has(cur.id) && hasNext(cur) && !nearBottom,
+      );
     };
 
     const onClick = (e: MouseEvent) => {
@@ -406,9 +409,7 @@ function NextSectionButton() {
       tabIndex={visible ? 0 : -1}
       className={cn(
         "fixed bottom-5 left-1/2 z-30 inline-flex size-11 -translate-x-1/2 items-center justify-center rounded-full border border-border bg-paper/70 text-muted-foreground shadow-lg backdrop-blur transition-all duration-300 hover:text-ink",
-        visible
-          ? "opacity-100"
-          : "pointer-events-none translate-y-6 opacity-0",
+        visible ? "opacity-100" : "pointer-events-none translate-y-6 opacity-0",
       )}
     >
       <svg

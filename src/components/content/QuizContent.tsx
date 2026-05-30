@@ -3,7 +3,6 @@ import { AllyQuiz } from "@/components/interactives/AllyQuiz";
 export function QuizContent() {
   return (
     <div className="mx-auto max-w-6xl px-6 pt-24 pb-28">
-      <div className="pride-rule h-1 w-16 rounded-full" />
       <h1 className="mt-4 font-display text-5xl md:text-7xl leading-[1.05] reading-width">
         Πόσο σύμμαχος είσαι;
       </h1>

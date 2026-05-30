@@ -41,15 +41,12 @@ const ogImage =
     <meta name="twitter:description" content={ogDescription} />
     <meta name="twitter:image" content={ogImage} />
 
-    {/* No-flash theme: runs before paint, dependency-free, localStorage guarded. */}
+    {/* No-flash theme: light by default, dark only if the device asks for it.
+        Device-driven (no stored override), runs before paint. */}
     <script is:inline>
       (function () {
         try {
-          var saved = localStorage.getItem("wp-theme");
-          var prefersDark = window.matchMedia(
-            "(prefers-color-scheme: dark)"
-          ).matches;
-          var dark = saved ? saved === "dark" : prefersDark;
+          var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
           var el = document.documentElement;
           el.classList.toggle("dark", dark);
           el.style.colorScheme = dark ? "dark" : "light";
