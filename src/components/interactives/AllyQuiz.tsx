@@ -13,7 +13,7 @@ import { AllyBadge } from "./AllyBadge";
 
 const QUESTION_COUNT = 6;
 
-type Phase = "start" | "quiz" | "result" | "badge";
+type Phase = "quiz" | "result" | "badge";
 
 export function AllyQuiz() {
   const reduce = useReducedMotion();
@@ -21,7 +21,7 @@ export function AllyQuiz() {
   const [questions] = useState(() =>
     pickQuestions(allyQuizPool, QUESTION_COUNT),
   );
-  const [phase, setPhase] = useState<Phase>("start");
+  const [phase, setPhase] = useState<Phase>("quiz");
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
 
@@ -30,8 +30,10 @@ export function AllyQuiz() {
   const chosen = current?.options.find((o) => o.id === chosenId);
   const isLast = index === questions.length - 1;
 
+  // You can change your mind on the current question: re-clicking overwrites the
+  // answer (last pick wins) and refreshes the feedback. No going back, though.
   function answer(option: Option) {
-    if (!current || answers[current.id]) return; // lock once answered
+    if (!current) return;
     setAnswers((a) => ({ ...a, [current.id]: option.id }));
   }
 
@@ -54,23 +56,6 @@ export function AllyQuiz() {
         exit: { opacity: 0, y: -8 },
         transition: { duration: 0.3 },
       };
-
-  if (phase === "start") {
-    return (
-      <div className="reading-width">
-        <p className="text-lg leading-relaxed text-muted-foreground">
-          Έξι σύντομες ερωτήσεις. Στο τέλος κερδίζεις ένα badge, ό,τι κι αν
-          απαντήσεις.
-        </p>
-        <button
-          onClick={() => setPhase("quiz")}
-          className="mt-8 rounded-md bg-ink px-6 py-3 text-sm uppercase tracking-[0.2em] text-paper transition-colors hover:bg-accent"
-        >
-          Ξεκίνα το τεστ
-        </button>
-      </div>
-    );
-  }
 
   if (phase === "result") {
     const score = scoreAnswers(questions, answers);
@@ -109,22 +94,25 @@ export function AllyQuiz() {
   return (
     <div className="reading-width">
       {/* progress */}
-      <ol className="mb-10 flex gap-2" aria-label="Πρόοδος">
+      <ol className="mb-4 flex gap-2" aria-label="Πρόοδος">
         {questions.map((q, i) => (
           <li
             key={q.id}
             aria-current={i === index ? "step" : undefined}
             className={cn(
-              "h-1.5 flex-1 rounded-full transition-colors",
-              i < index || answers[q.id]
-                ? "bg-accent"
-                : i === index
-                  ? "bg-ink"
+              "h-1.5 flex-1 overflow-hidden rounded-full transition-colors",
+              i === index
+                ? "pride-rule"
+                : i < index || answers[q.id]
+                  ? "bg-accent"
                   : "bg-border",
             )}
           />
         ))}
       </ol>
+      <p className="mb-10 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+        Ερώτηση {index + 1} από {questions.length} · μπορείς να αλλάξεις γνώμη
+      </p>
 
       <AnimatePresence mode="wait">
         <motion.div key={current.id} {...fade}>
@@ -139,13 +127,12 @@ export function AllyQuiz() {
                 <button
                   key={o.id}
                   onClick={() => answer(o)}
-                  disabled={!!chosenId}
                   aria-pressed={picked}
                   className={cn(
                     "block w-full rounded-lg border px-5 py-4 text-left text-lg transition-colors",
                     picked
                       ? "border-accent bg-accent/10"
-                      : "border-border hover:border-ink disabled:opacity-50",
+                      : "border-border hover:border-ink",
                   )}
                 >
                   {o.text}
@@ -155,11 +142,13 @@ export function AllyQuiz() {
           </div>
 
           <div aria-live="polite" className="min-h-[3.5rem]">
-            <AnimatePresence>
+            <AnimatePresence mode="wait">
               {chosen && (
                 <motion.div
+                  key={chosen.id}
                   initial={reduce ? false : { opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
+                  exit={reduce ? undefined : { opacity: 0 }}
                   className="mt-6 border-l-2 border-accent pl-4 leading-relaxed text-muted-foreground"
                 >
                   {chosen.feedback}

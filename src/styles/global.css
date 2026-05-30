@@ -204,6 +204,34 @@
     );
   }
 
+  /* Same spectrum, but dissolving into the page at both ends — so a full-width
+     rule reads as a soft accent, not a hard edge-to-edge bar. */
+  .pride-rule-fade {
+    background: linear-gradient(
+      to right,
+      var(--pride-1),
+      var(--pride-2),
+      var(--pride-3),
+      var(--pride-4),
+      var(--pride-5),
+      var(--pride-6)
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 18%,
+      #000 82%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 18%,
+      #000 82%,
+      transparent
+    );
+  }
+
   .reveal {
     opacity: 0;
     transform: translateY(12px);

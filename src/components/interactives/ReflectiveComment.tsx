@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { cn } from "@/lib/utils";
 import { reflections, composerReflection } from "@/content/reflections";
 
 type ModalState = { text: string; advance: boolean };
@@ -18,6 +19,8 @@ export function ReflectiveComment() {
   const [modal, setModal] = useState<ModalState | null>(null);
   const [draft, setDraft] = useState("");
   const [anon, setAnon] = useState(false);
+  // Which cards the visitor has pressed "Συμφωνώ" on (local, adds +1 to the tally).
+  const [agreed, setAgreed] = useState<Record<number, boolean>>({});
 
   return (
     <div className="reading-width">
@@ -32,23 +35,37 @@ export function ReflectiveComment() {
               <span className="text-sm text-muted-foreground">{r.author}</span>
             </div>
             <p className="mt-3 font-display text-lg leading-snug">{r.text}</p>
-            <button
-              onClick={() => setModal({ text: r.reflection, advance: false })}
-              className="mt-4 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-accent"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                className="size-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.8}
-                strokeLinecap="round"
-                strokeLinejoin="round"
+            <div className="mt-4 flex items-center gap-3">
+              <span className="text-sm tabular-nums text-muted-foreground">
+                {r.likes + (agreed[i] ? 1 : 0)}
+              </span>
+              <button
+                onClick={() => {
+                  setAgreed((a) => ({ ...a, [i]: true }));
+                  setModal({ text: r.reflection, advance: false });
+                }}
+                aria-pressed={!!agreed[i]}
+                className={cn(
+                  "inline-flex items-center gap-2 text-sm transition-colors",
+                  agreed[i]
+                    ? "text-accent"
+                    : "text-muted-foreground hover:text-accent",
+                )}
               >
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z" />
-              </svg>
-              Συμφωνώ
-            </button>
+                <svg
+                  viewBox="0 0 24 24"
+                  className="size-4"
+                  fill={agreed[i] ? "currentColor" : "none"}
+                  stroke="currentColor"
+                  strokeWidth={1.8}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z" />
+                </svg>
+                Συμφωνώ
+              </button>
+            </div>
           </li>
         ))}
       </ul>

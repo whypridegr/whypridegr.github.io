@@ -4,7 +4,7 @@ import type { Scenario } from "@/content/scenarios";
 
 export function GuessGreece({ items }: { items: Scenario[] }) {
   return (
-    <div className="space-y-6">
+    <div className="grid gap-6 md:grid-cols-2">
       {items.map((s, i) => (
         <Card key={i} scenario={s} />
       ))}
@@ -14,14 +14,13 @@ export function GuessGreece({ items }: { items: Scenario[] }) {
 
 function Card({ scenario }: { scenario: Scenario }) {
   const [guess, setGuess] = useState<"Ελλάδα" | "Αλλού" | null>(null);
+  const answered = guess !== null;
   const correct = guess === scenario.answer;
   return (
-    <div className="border border-border bg-card p-6 md:p-8 rounded-lg">
-      <p className="font-display text-xl md:text-2xl leading-snug">
-        {scenario.text}
-      </p>
+    <div className="flex flex-col rounded-lg border border-border bg-card p-6 md:p-8">
+      <p className="text-xl leading-snug md:text-2xl">{scenario.text}</p>
 
-      {guess === null ? (
+      {!answered ? (
         <>
           <p className="mt-6 text-sm text-muted-foreground">
             Πού νομίζεις ότι συνέβη;
@@ -32,7 +31,7 @@ function Card({ scenario }: { scenario: Scenario }) {
           </div>
         </>
       ) : (
-        <div className="mt-6 border-t border-border pt-6">
+        <div className="mt-6 border-t border-border pt-5">
           <p
             className={cn(
               "text-sm uppercase tracking-[0.2em]",
@@ -63,7 +62,7 @@ function Choice({
   return (
     <button
       onClick={onClick}
-      className="px-5 py-2 text-sm uppercase tracking-[0.15em] border border-ink hover:bg-ink hover:text-paper transition-colors rounded-md"
+      className="flex-1 rounded-md border border-ink px-5 py-2.5 text-sm uppercase tracking-[0.15em] transition-colors hover:bg-ink hover:text-paper"
     >
       {children}
     </button>

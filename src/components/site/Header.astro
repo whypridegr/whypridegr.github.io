@@ -1,22 +1,131 @@
 ---
 import ThemeToggle from "./ThemeToggle.astro";
+
+const links = [
+  { href: "/", label: "Αρχική" },
+  { href: "/quiz", label: "Πόσο ally είσαι;" },
+  { href: "/#erotiseis", label: "Συχνές ερωτήσεις" },
+  { href: "/glossary", label: "Γλωσσάρι" },
+  { href: "/sources", label: "Πηγές" },
+  { href: "/about", label: "Σχετικά" },
+];
 ---
 
-<header
-  class="sticky top-0 z-40 backdrop-blur-md bg-paper/80 border-b border-border"
->
-  <div
-    class="mx-auto max-w-6xl px-6 flex items-center justify-between h-16"
+{/* No bar. Two floating sticky controls that tuck away on scroll-down. */}
+<div id="wp-nav" class="pointer-events-none">
+  <button
+    id="wp-menu-btn"
+    type="button"
+    aria-expanded="false"
+    aria-controls="wp-menu"
+    aria-label="Άνοιγμα μενού πλοήγησης"
+    class="pointer-events-auto fixed left-3 top-3 z-50 inline-flex items-center justify-center rounded-full bg-paper/70 p-2.5 shadow-sm backdrop-blur transition-colors hover:bg-secondary"
   >
-    <a href="/" class="flex items-center gap-3 group" aria-label="WhyPride αρχική">
-      <span
-        class="h-2 w-8 pride-rule rounded-full transition-all duration-300 group-hover:w-12"
-      ></span>
-      <span class="font-display text-xl">WhyPride.gr</span>
-    </a>
+    <span id="wp-bar" class="block h-2 w-8 rounded-full pride-rule transition-transform duration-300"></span>
+  </button>
 
-    <nav aria-label="Κύρια πλοήγηση" class="flex items-center gap-1 md:gap-2 text-sm">
-      <ThemeToggle />
-    </nav>
+  <nav
+    id="wp-menu"
+    aria-label="Πλοήγηση ιστότοπου"
+    hidden
+    class="pointer-events-auto fixed left-3 top-14 z-50 w-56 rounded-xl border border-border bg-card p-2 shadow-xl"
+  >
+    <div class="pride-rule-fade mb-2 h-px w-full"></div>
+    {
+      links.map((l) => (
+        <a
+          href={l.href}
+          class="block rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-secondary hover:text-accent"
+        >
+          {l.label}
+        </a>
+      ))
+    }
+  </nav>
+
+  <div
+    id="wp-theme-wrap"
+    class="pointer-events-auto fixed right-3 top-3 z-50 rounded-full bg-paper/70 shadow-sm backdrop-blur transition-all duration-300"
+  >
+    <ThemeToggle />
   </div>
-</header>
+</div>
+
+<style>
+  /* Scrolling down: rainbow tips to vertical, theme control lifts away. */
+  #wp-menu-btn.wp-condensed #wp-bar {
+    transform: rotate(90deg);
+  }
+  #wp-theme-wrap.wp-collapsed {
+    opacity: 0;
+    transform: translateY(-12px);
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  const btn = document.getElementById("wp-menu-btn");
+  const menu = document.getElementById("wp-menu");
+  const themeWrap = document.getElementById("wp-theme-wrap");
+
+  if (btn && menu) {
+    let open = false;
+
+    const setOpen = (next: boolean) => {
+      open = next;
+      menu.hidden = !next;
+      btn.setAttribute("aria-expanded", String(next));
+      if (next) {
+        // Keep both controls in their normal spot while the menu is open.
+        btn.classList.remove("wp-condensed");
+        themeWrap?.classList.remove("wp-collapsed");
+        menu.querySelector<HTMLElement>("a")?.focus();
+      }
+    };
+
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      setOpen(!open);
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!open) return;
+      const t = e.target as Node;
+      // Close on outside click, or when a link inside the menu is chosen
+      // (same-page hash links don't reload, so close them explicitly).
+      const el = t as HTMLElement;
+      if (
+        (!menu.contains(t) && !btn.contains(t)) ||
+        (menu.contains(t) && el.closest?.("a"))
+      ) {
+        setOpen(false);
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (open && e.key === "Escape") {
+        setOpen(false);
+        btn.focus();
+      }
+    });
+
+    // Collapse on scroll-down, restore on scroll-up (never while menu is open).
+    let lastY = window.scrollY;
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        if (!open) {
+          const condense = y > lastY && y > 120;
+          btn.classList.toggle("wp-condensed", condense);
+          themeWrap?.classList.toggle("wp-collapsed", condense);
+        }
+        lastY = y;
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
+</script>

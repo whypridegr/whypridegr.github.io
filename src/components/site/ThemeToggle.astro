@@ -42,4 +42,21 @@
 
   btn?.setAttribute("aria-pressed", String(isDark()));
   btn?.addEventListener("click", () => apply(isDark() ? "light" : "dark"));
+
+  // Follow the device theme live — but only while the visitor hasn't made an
+  // explicit choice (no saved preference). Once they toggle, we respect it.
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  mq.addEventListener("change", (e) => {
+    let saved = null;
+    try {
+      saved = localStorage.getItem("wp-theme");
+    } catch (err) {
+      /* storage unavailable */
+    }
+    if (saved) return;
+    const dark = e.matches;
+    document.documentElement.classList.toggle("dark", dark);
+    document.documentElement.style.colorScheme = dark ? "dark" : "light";
+    btn?.setAttribute("aria-pressed", String(dark));
+  });
 </script>

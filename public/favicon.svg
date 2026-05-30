@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="WhyPride">
+  <defs>
+    <clipPath id="r"><rect width="32" height="32" rx="7" /></clipPath>
+  </defs>
+  <g clip-path="url(#r)">
+    <rect width="32" height="5.34" y="0" fill="#e0463c" />
+    <rect width="32" height="5.34" y="5.33" fill="#e98a3b" />
+    <rect width="32" height="5.34" y="10.66" fill="#ecc94b" />
+    <rect width="32" height="5.34" y="15.99" fill="#3fa564" />
+    <rect width="32" height="5.34" y="21.32" fill="#3b6fd6" />
+    <rect width="32" height="5.34" y="26.65" fill="#8a4fd0" />
+  </g>
+</svg>

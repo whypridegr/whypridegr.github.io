@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 import { Link } from "@/components/site/Link";
 import { Accordion } from "@/components/primitives/Accordion";
 import { FlipCard } from "@/components/primitives/FlipCard";
@@ -24,11 +25,8 @@ export function HomeContent() {
     <>
       <Hero />
 
-      {/* — Reflection first: the questions we don't dare to ask — */}
-      <Section
-        id="erotiseis"
-        title="Δύσκολες ερωτήσεις και οι απαντήσεις τους."
-      >
+      {/* — Questions first: the thing people actually come with — */}
+      <Section id="erotiseis" title="Δύσκολες ερωτήσεις και οι απαντήσεις τους.">
         <Accordion items={faq} initialVisible={4} />
       </Section>
 
@@ -52,7 +50,10 @@ export function HomeContent() {
       </Section>
 
       {/* Segregation sandbox — interactive only, no framing */}
-      <Section id="prokatalipsi" title="Ένα μικρό πείραμα.">
+      <Section
+        id="prokatalipsi"
+        title="Πώς λειτουργεί η προκατάληψη με ένα πείραμα."
+      >
         <SegregationSandbox />
       </Section>
 
@@ -87,8 +88,12 @@ export function HomeContent() {
             <p className="mx-auto mt-8 max-w-xl font-display text-2xl md:text-3xl leading-snug">
               Ελπίζουμε να σε κάναμε να προβληματιστείς, έστω και λίγο.
             </p>
-            <p className="mx-auto mt-4 max-w-xl text-lg text-muted-foreground leading-relaxed">
-              Ίσως τελικά να μπορούμε να γεφυρώσουμε λίγο το χάσμα.
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground leading-relaxed">
+              Αν θες, κάνε κάτι μικρό μ' αυτά. Φέτος γίνονται Pride σε πολλές
+              πόλεις· πέρνα έστω από μακριά, χωρίς να συμμετέχεις, και δες μόνος
+              σου αν είναι όντως αυτό που σου είχαν πει. Ή πιάσε κουβέντα με
+              κάποιον γνωστό σου από την κοινότητα. Τις πιο πολλές φορές δεν
+              υπάρχει κάτι να μας χωρίζει, ούτε κάτι να φοβηθείς.
             </p>
             <div className="mt-12 flex flex-col items-center gap-8">
               <a
@@ -164,6 +169,8 @@ export function HomeContent() {
           </Link>
         </div>
       </Section>
+
+      <NextSectionButton />
     </>
   );
 }
@@ -318,5 +325,71 @@ function Section({
         </Reveal>
       </div>
     </section>
+  );
+}
+
+// A single sticky overlay control: tap to glide to the next section, anytime —
+// long section or not. Hides itself near the very bottom of the page.
+function NextSectionButton() {
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const nearBottom =
+        window.innerHeight + window.scrollY >=
+        document.body.scrollHeight - 240;
+      setHidden(nearBottom);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
+  const goNext = () => {
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const sections = Array.from(
+      document.querySelectorAll<HTMLElement>("section[id]"),
+    );
+    // First section whose top is meaningfully below the viewport top.
+    const next = sections.find((s) => s.getBoundingClientRect().top > 80);
+    next?.scrollIntoView({
+      behavior: reduced ? "auto" : "smooth",
+      block: "start",
+    });
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={goNext}
+      aria-label="Επόμενη ενότητα"
+      aria-hidden={hidden}
+      tabIndex={hidden ? -1 : 0}
+      className={cn(
+        "fixed bottom-5 left-1/2 z-30 inline-flex size-11 -translate-x-1/2 items-center justify-center rounded-full border border-border bg-paper/70 text-muted-foreground shadow-lg backdrop-blur transition-all duration-300 hover:text-ink",
+        hidden
+          ? "pointer-events-none translate-y-6 opacity-0"
+          : "opacity-100",
+      )}
+    >
+      <svg
+        viewBox="0 0 24 24"
+        className="size-5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.8}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden
+      >
+        <path d="M12 5v14M19 12l-7 7-7-7" />
+      </svg>
+    </button>
   );
 }

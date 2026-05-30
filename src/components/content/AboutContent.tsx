@@ -7,9 +7,9 @@ export function AboutContent() {
 
       <div className="mt-12 reading-width space-y-8 text-lg leading-relaxed">
         <p>
-          Το WhyPride.gr δεν είναι καμπάνια. Δεν είναι ΜΚΟ. Είναι ένας ήσυχος
-          οδηγός, για όποιον έχει αναρωτηθεί «καλά μα, γιατί τόση φασαρία;» και
-          δεν βρήκε μια απάντηση που να μην του φωνάζει.
+          Το WhyPride.gr δεν είναι καμπάνια. Δεν είναι ΜΚΟ. Είναι ένας
+          τεκμηριωμένος οδηγός, για όποιον έχει αναρωτηθεί «καλά μα, γιατί τόση
+          φασαρία;» και δεν βρήκε μια απάντηση που να μην του φωνάζει.
         </p>
 
         <p>
@@ -23,12 +23,27 @@ export function AboutContent() {
           στείλε μας.
         </p>
 
+        <p>
+          Ο κώδικας είναι ανοιχτός. Αν ξέρεις λίγο προγραμματισμό ή απλώς έχεις
+          μια ιδέα, μια διόρθωση ή μια πηγή, το repository είναι στο{" "}
+          <a
+            href="https://github.com/whypridegr/whypridegr.github.io"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-ink underline decoration-border underline-offset-4 hover:decoration-accent"
+          >
+            GitHub
+          </a>
+          . Άνοιξε ένα issue ή στείλε ένα pull request· κάθε συνεισφορά είναι
+          ευπρόσδεκτη.
+        </p>
+
         <hr className="border-border" />
 
         <p className="text-base text-muted-foreground">
-          Φτιαγμένο στην Αθήνα. Αν θες να συμβάλεις (με διόρθωση, ιστορία, ή
-          απλώς μια ιδέα), γράψε στο{" "}
-          <span className="text-ink">hello@whypride.gr</span>.
+          Φτιαγμένο στην Αθήνα. Αν θες να συμβάλεις (με διόρθωση, ή απλώς μια
+          ιδέα), γράψε στο{" "}
+          <span className="text-ink">whypridegr@gmail.com</span>.
         </p>
       </div>
     </div>
