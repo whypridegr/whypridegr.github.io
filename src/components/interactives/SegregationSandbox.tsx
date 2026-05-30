@@ -118,7 +118,38 @@ export function SegregationSandbox() {
   const gridRef = useRef(grid);
   gridRef.current = grid;
 
+  const rootRef = useRef<HTMLDivElement>(null);
+  const autoStarted = useRef(false);
+
   const seg = useMemo(() => segregation(grid, nb), [grid, nb]);
+
+  // Kick the simulation off on its own the first time it scrolls into view,
+  // after a short beat so the section settles first.
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    let timer: number | undefined;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting && !autoStarted.current) {
+            autoStarted.current = true;
+            io.disconnect();
+            timer = window.setTimeout(() => {
+              setDone(false);
+              setRunning(true);
+            }, 300);
+          }
+        }
+      },
+      { threshold: 0.35 },
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      if (timer) window.clearTimeout(timer);
+    };
+  }, []);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -174,7 +205,10 @@ export function SegregationSandbox() {
   };
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_18rem] lg:items-start">
+    <div
+      ref={rootRef}
+      className="grid gap-8 lg:grid-cols-[1fr_18rem] lg:items-start"
+    >
       {/* The grid */}
 
       <div
