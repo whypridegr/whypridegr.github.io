@@ -21,7 +21,6 @@ export function HistoricalParallels() {
   const closing = useRef(false);
 
   const [expanded, setExpanded] = useState<number | null>(null);
-  const [showSources, setShowSources] = useState(false);
 
   const reduced =
     typeof window !== "undefined" &&
@@ -63,30 +62,12 @@ export function HistoricalParallels() {
     { dependencies: [expanded], scope: container },
   );
 
-  // Reveal the sources by unfolding them downward, like a folded paper flap.
-  useGSAP(
-    () => {
-      if (!showSources || reduced) return;
-      gsap.from("[data-sources]", {
-        height: 0,
-        autoAlpha: 0,
-        rotateX: -92,
-        transformOrigin: "top center",
-        transformPerspective: 800,
-        duration: 0.7,
-        ease: "power3.out",
-      });
-    },
-    { dependencies: [showSources], scope: container },
-  );
-
   const { contextSafe } = useGSAP({ scope: container });
 
   const open = (i: number) => {
     if (expanded !== null || closing.current) return;
     lastTrigger.current = document.activeElement as HTMLElement | null;
     document.body.style.overflow = "hidden";
-    setShowSources(false);
     setExpanded(i);
   };
 
@@ -94,7 +75,6 @@ export function HistoricalParallels() {
     document.body.style.overflow = "";
     closing.current = false;
     setExpanded(null);
-    setShowSources(false);
     if (lastTrigger.current?.isConnected) lastTrigger.current.focus();
   };
 
@@ -228,16 +208,7 @@ export function HistoricalParallels() {
             aria-label={`Τότε και σήμερα: ${current.against}`}
             className="fixed left-1/2 top-1/2 z-[61] max-h-[88vh] w-[min(92vw,620px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto"
           >
-            <article className="paper torn-both relative px-6 pb-14 pt-10 md:px-12 md:pb-16 md:pt-12">
-              {/* Extra wear: heavier blotches + two fold creases, multiplied
-                  over the base paper so the opened sheet looks well-thumbed. */}
-              <div
-                aria-hidden
-                className="paper-distress pointer-events-none absolute inset-0 mix-blend-multiply"
-              />
-              {/* Content layer sits above the distress overlay so the type
-                  stays crisp while the stains only weather the paper. */}
-              <div className="relative">
+            <article className="paper torn-both px-6 pb-14 pt-10 md:px-12 md:pb-16 md:pt-12">
               <div className="flex items-center justify-between border-b border-[#c3b79b] pb-2 font-sans text-[0.66rem] uppercase tracking-[0.22em] text-[#7d7257]">
                 <span>Τότε · {current.era}</span>
                 <button
@@ -278,57 +249,32 @@ export function HistoricalParallels() {
               </div>
 
               {(current.source || current.greek) && (
-                <div className="mt-8">
-                  {!showSources ? (
-                    <button
-                      onClick={() => setShowSources(true)}
-                      className="inline-flex items-center gap-2 rounded-md border border-[#9b3520] px-4 py-2 font-sans text-xs uppercase tracking-[0.2em] text-[#9b3520] transition-colors hover:bg-[#9b3520] hover:text-[#f7f0df]"
-                    >
-                      Δες τις πηγές
-                      <svg
-                        viewBox="0 0 24 24"
-                        className="size-4"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden
-                      >
-                        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
-                        <circle cx="12" cy="12" r="3" />
-                      </svg>
-                    </button>
-                  ) : (
-                    <div
-                      data-sources
-                      className="overflow-hidden border-t border-dashed border-[#b3a684] pt-5 font-sans text-sm text-[#5c5440]"
-                    >
-                      {current.source && (
-                        <div>
-                          <span className="text-[0.66rem] uppercase tracking-[0.22em] text-[#7d7257]">
-                            Ιστορικά
-                          </span>
-                          <div className="mt-1">
-                            <CiteList cite={current.source} />
-                          </div>
-                        </div>
-                      )}
-                      {current.greek && (
-                        <div className={current.source ? "mt-5" : undefined}>
-                          <span className="text-[0.66rem] uppercase tracking-[0.22em] text-[#7d7257]">
-                            Ελλάδα, σήμερα
-                          </span>
-                          <div className="mt-1">
-                            <CiteList cite={current.greek} />
-                          </div>
-                        </div>
-                      )}
+                <div className="mt-8 border-t border-dashed border-[#b3a684] pt-5 font-sans text-sm text-[#5c5440]">
+                  <span className="text-[0.66rem] uppercase tracking-[0.22em] text-[#9b3520]">
+                    Πηγές
+                  </span>
+                  {current.source && (
+                    <div className="mt-3">
+                      <span className="text-[0.66rem] uppercase tracking-[0.22em] text-[#7d7257]">
+                        Ιστορικά
+                      </span>
+                      <div className="mt-1">
+                        <CiteList cite={current.source} />
+                      </div>
+                    </div>
+                  )}
+                  {current.greek && (
+                    <div className="mt-5">
+                      <span className="text-[0.66rem] uppercase tracking-[0.22em] text-[#7d7257]">
+                        Ελλάδα, σήμερα
+                      </span>
+                      <div className="mt-1">
+                        <CiteList cite={current.greek} />
+                      </div>
                     </div>
                   )}
                 </div>
               )}
-              </div>
             </article>
           </div>
         </>
