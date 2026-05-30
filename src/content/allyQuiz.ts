@@ -121,7 +121,8 @@ export const allyQuizPool: Question[] = [
         id: "depends",
         text: "Στον δικό μου κύκλο ναι· ξέρω όμως ότι αλλού δεν ισχύει.",
         score: 2,
-        feedback: "Το ότι δεν το βλέπεις δεν σημαίνει ότι δεν συμβαίνει.",
+        feedback:
+          "Μερικές φορές ξεχνιόμαστε με το πόσο ασφαλής είναι ο κύκλος μας σε σχέση με τον υπόλοιπο κόσμο εκεί έξω.",
       },
       {
         id: "solved",
@@ -177,7 +178,7 @@ export const allyQuizPool: Question[] = [
       },
       {
         id: "laugh",
-        text: "Γελάω για να μην το κάνω θέμα.",
+        text: "Γελάω κι εγώ, είτε συμφωνώ είτε όχι.",
         score: -2,
         feedback:
           "Το γέλιο δίνει άδεια για το επόμενο. Δεν χρειάζεται να το δώσεις.",
@@ -318,6 +319,19 @@ export const allyQuizPool: Question[] = [
         score: -2,
         feedback:
           "Δεκαετίες ερευνών δείχνουν ότι τα παιδιά ομόφυλων γονιών μεγαλώνουν εξίσου καλά.",
+        cite: {
+          note: "Επισκοπήσεις ερευνών από επαγγελματικούς φορείς καταλήγουν ότι η ευημερία και η ανάπτυξη των παιδιών δεν σχετίζονται με τον σεξουαλικό προσανατολισμό των γονιών.",
+          links: [
+            {
+              label: "American Academy of Pediatrics (Pediatrics, 2013)",
+              url: "https://publications.aap.org/pediatrics/article/131/4/e1374/31926/Promoting-the-Well-Being-of-Children-Whose-Parents",
+            },
+            {
+              label: "APA: Children of same-sex parents",
+              url: "https://www.apa.org/news/press/releases/2015/07/same-sex-parents",
+            },
+          ],
+        },
       },
     ],
   },
@@ -338,8 +352,7 @@ export const allyQuizPool: Question[] = [
         id: "scroll-by",
         text: "Το προσπερνάω, δεν μπαίνω σε καβγά.",
         score: 1,
-        feedback:
-          "Κατανοητό. Κάποιες φορές όμως ένα σχόλιο σπάει τη σιωπή.",
+        feedback: "Κατανοητό. Κάποιες φορές όμως ένα σχόλιο σπάει τη σιωπή.",
       },
       {
         id: "like-it",
@@ -402,7 +415,8 @@ export const allyQuizPool: Question[] = [
         id: "tradition-first",
         text: "«Σωστά, η παράδοση πάνω απ' όλα.»",
         score: -2,
-        feedback: "Καμία παράδοση δεν χρειάζεται τον αποκλεισμό κάποιου για να σταθεί.",
+        feedback:
+          "Καμία παράδοση δεν χρειάζεται τον αποκλεισμό κάποιου για να σταθεί.",
       },
     ],
   },
@@ -414,10 +428,23 @@ export const allyQuizPool: Question[] = [
     options: [
       {
         id: "change-topic",
-        text: "Αλλάζω ευγενικά θέμα· μέχρι πρόσφατα υπήρχε θεσμικός αποκλεισμός κι ίσως του είναι άβολο.",
+        text: "Αλλάζω ευγενικά θέμα· ο αποκλεισμός στην αιμοδοσία είναι ευαίσθητο ζήτημα κι ίσως του είναι άβολο.",
         score: 2,
         feedback:
           "Σέβεσαι το ιατρικό του απόρρητο και ένα βάρος που δεν διάλεξε.",
+        cite: {
+          note: "Η απαγόρευση αιμοδοσίας για άνδρες που κάνουν σεξ με άνδρες ίσχυε στην Ελλάδα από τη δεκαετία του '80. Άρθηκε τον Ιανουάριο 2022 και επαναφέρθηκε το 2025 με απόφαση του Συμβουλίου της Επικρατείας.",
+          links: [
+            {
+              label: "Keep Talking Greece: άρση 2022",
+              url: "https://www.keeptalkinggreece.com/2022/01/11/blood-donation-gay-men-ban-lifted-greece/",
+            },
+            {
+              label: "AABB: επαναφορά 2025",
+              url: "https://www.aabb.org/news-resources/news/article/2025/04/08/greek-court-overturns-policy-allowing-blood-donation-from-msm",
+            },
+          ],
+        },
       },
       {
         id: "just-lie",
@@ -447,6 +474,15 @@ export const allyQuizPool: Question[] = [
         score: 2,
         feedback:
           "Είναι μια φυσική βιολογική ποικιλομορφία, όχι κάτι περίεργο. Η λέξη μετράει.",
+        cite: {
+          note: "Ίντερσεξ είναι τα άτομα που γεννιούνται με χαρακτηριστικά φύλου (χρωμοσώματα, γονάδες, ορμόνες, ανατομία) που δεν εντάσσονται στα τυπικά δίπολα αρσενικό/θηλυκό. Πρόκειται για φυσική βιολογική ποικιλομορφία.",
+          links: [
+            {
+              label: "OHCHR: Intersex people",
+              url: "https://www.ohchr.org/en/sexual-orientation-and-gender-identity/intersex-people",
+            },
+          ],
+        },
       },
       {
         id: "words-dont-matter",
@@ -459,8 +495,7 @@ export const allyQuizPool: Question[] = [
         id: "advantage-myth",
         text: "Λέω «α, έχει και τα δύο, άρα έχει πλεονέκτημα».",
         score: -2,
-        feedback:
-          "Αυτό είναι μύθος. Η ίντερσεξ κατάσταση δεν λειτουργεί έτσι.",
+        feedback: "Αυτό είναι μύθος. Η ίντερσεξ κατάσταση δεν λειτουργεί έτσι.",
       },
     ],
   },
@@ -476,6 +511,15 @@ export const allyQuizPool: Question[] = [
         score: 2,
         feedback:
           "Η ασεξουαλικότητα είναι υπαρκτός προσανατολισμός, όχι κάτι που λείπει.",
+        cite: {
+          note: "Η ασεξουαλικότητα ορίζεται ως η απουσία σεξουαλικής έλξης προς άλλους και αναγνωρίζεται ως σεξουαλικός προσανατολισμός.",
+          links: [
+            {
+              label: "APA Dictionary: Asexuality",
+              url: "https://dictionary.apa.org/asexuality",
+            },
+          ],
+        },
       },
       {
         id: "right-person",
@@ -556,6 +600,15 @@ export const allyQuizPool: Question[] = [
         text: "Αναγνωρίζω τη δυσκολία και κοιτάζω αν ξέρω κάποιον που νοικιάζει.",
         score: 2,
         feedback: "Είναι υπαρκτό, δομικό εμπόδιο, όχι γκρίνια.",
+        cite: {
+          note: "Έρευνα του Οργανισμού Θεμελιωδών Δικαιωμάτων της ΕΕ (FRA) καταγράφει σημαντικά ποσοστά διακρίσεων σε βάρος ΛΟΑΤΚΙ+ ατόμων σε διάφορους τομείς της ζωής, μεταξύ άλλων στη στέγαση.",
+          links: [
+            {
+              label: "FRA: EU LGBTI II Survey (2020)",
+              url: "https://fra.europa.eu/en/publication/2020/eu-lgbti-survey-results",
+            },
+          ],
+        },
       },
       {
         id: "say-roommates",

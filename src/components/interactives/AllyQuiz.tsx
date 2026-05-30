@@ -9,6 +9,8 @@ import {
   type Option,
 } from "@/lib/quiz";
 import { allyQuizPool } from "@/content/allyQuiz";
+import { Popover } from "@/components/primitives/Popover";
+import { CiteList } from "@/components/primitives/CiteList";
 import { AllyBadge } from "./AllyBadge";
 
 const QUESTION_COUNT = 6;
@@ -149,6 +151,16 @@ export function AllyQuiz() {
                   className="mt-6 border-l-2 border-accent pl-4 leading-relaxed text-muted-foreground"
                 >
                   {chosen.feedback}
+                  {chosen.cite && (
+                    <Popover
+                      label="ⓘ"
+                      ariaLabel="Πηγή"
+                      align="start"
+                      triggerClassName="ml-2 no-underline text-muted-foreground"
+                    >
+                      <CiteList cite={chosen.cite} />
+                    </Popover>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>

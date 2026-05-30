@@ -1,5 +1,7 @@
 // Pure quiz logic — no React, no DOM. The flow component owns state; this owns the math.
 
+import type { Cite } from "@/content/cite";
+
 export type Category = "Ορολογία" | "Προνόμιο" | "Καθημερινότητα";
 
 export type Option = {
@@ -8,6 +10,9 @@ export type Option = {
   score: number;
   /** Shown after the user picks this option. */
   feedback: string;
+  /** Optional source shown in a Popover next to the feedback, for options
+   *  whose feedback makes a factual claim. */
+  cite?: Cite;
 };
 
 export type Question = {
