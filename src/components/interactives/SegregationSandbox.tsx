@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { Popover } from "@/components/primitives/Popover";
 
 const COLS = 16;
 const ROWS = 16;
@@ -317,8 +318,26 @@ export function SegregationSandbox() {
         </div>
 
         <div className="border-t border-border pt-4">
-          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          <p className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
             Διαχωρισμός
+            <Popover
+              label="ⓘ"
+              align="end"
+              triggerClassName="no-underline text-muted-foreground"
+            >
+              Δείχνει πόσοι γείτονες, κατά μέσο όρο, ανήκουν στην ίδια ομάδα. Το
+              πείραμα βασίζεται στο μοντέλο διαχωρισμού του Thomas Schelling
+              (1971).{" "}
+              <a
+                href="https://www.tandfonline.com/doi/abs/10.1080/0022250X.1971.9989794"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-accent underline underline-offset-2"
+              >
+                Η αρχική μελέτη
+              </a>
+              .
+            </Popover>
           </p>
           <p className="mt-1 font-display text-4xl">{Math.round(seg * 100)}%</p>
           <p className="mt-1 text-xs text-muted-foreground">

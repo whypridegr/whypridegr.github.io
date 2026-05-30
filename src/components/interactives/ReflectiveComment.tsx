@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { Modal } from "@/components/primitives/Modal";
 import { reflections, composerReflection } from "@/content/reflections";
 
 type ModalState = { text: string; advance: boolean };
@@ -118,85 +118,28 @@ export function ReflectiveComment() {
         </div>
       </div>
 
-      <ReflectionModal
+      <Modal
         open={modal !== null}
-        text={modal?.text ?? ""}
-        onConfirm={() => {
-          const advance = modal?.advance ?? false;
-          setModal(null);
-          // Keep the flow going only after the deliberate "Το σκέφτηκα" on the
-          // composer reflection — not on Escape / click-outside.
-          if (advance) scrollToNext();
-        }}
-        onDismiss={() => setModal(null)}
-      />
-    </div>
-  );
-}
-
-function ReflectionModal({
-  open,
-  text,
-  onConfirm,
-  onDismiss,
-}: {
-  open: boolean;
-  text: string;
-  /** Deliberate acknowledgement ("Το σκέφτηκα"). */
-  onConfirm: () => void;
-  /** Escape / click-outside — closes without advancing. */
-  onDismiss: () => void;
-}) {
-  const closeRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    closeRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onDismiss();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open, onDismiss]);
-
-  return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <div
-            className="absolute inset-0 bg-ink/40 backdrop-blur-sm"
-            onClick={onDismiss}
-            aria-hidden
-          />
-          <motion.div
-            role="dialog"
-            aria-modal="true"
-            aria-label="Μια σκέψη"
-            className="relative z-10 w-full max-w-lg rounded-2xl border border-border bg-card p-8 shadow-xl"
-            initial={{ scale: 0.96, y: 12, opacity: 0 }}
-            animate={{ scale: 1, y: 0, opacity: 1 }}
-            exit={{ scale: 0.96, y: 12, opacity: 0 }}
-            transition={{ duration: 0.25 }}
+        onClose={() => setModal(null)}
+        label="Μια σκέψη"
+      >
+        <div className="pride-rule mb-6 h-1 w-12 rounded-full" />
+        <p className="text-lg leading-relaxed">{modal?.text}</p>
+        <div className="mt-8 flex justify-end">
+          <button
+            onClick={() => {
+              const advance = modal?.advance ?? false;
+              setModal(null);
+              // Advance only on the deliberate "Το σκέφτηκα" of the composer
+              // reflection — not on Escape / click-outside (those just close).
+              if (advance) scrollToNext();
+            }}
+            className="rounded-md border border-ink px-5 py-2 text-sm uppercase tracking-[0.15em] transition-colors hover:bg-ink hover:text-paper"
           >
-            <div className="pride-rule mb-6 h-1 w-12 rounded-full" />
-            <p className="text-lg leading-relaxed">{text}</p>
-            <div className="mt-8 flex justify-end">
-              <button
-                ref={closeRef}
-                onClick={onConfirm}
-                className="rounded-md border border-ink px-5 py-2 text-sm uppercase tracking-[0.15em] transition-colors hover:bg-ink hover:text-paper"
-              >
-                Το σκέφτηκα
-              </button>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+            Το σκέφτηκα
+          </button>
+        </div>
+      </Modal>
+    </div>
   );
 }

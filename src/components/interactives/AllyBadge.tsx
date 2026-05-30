@@ -241,7 +241,7 @@ export function AllyBadge({ onRestart }: { onRestart: () => void }) {
               disabled={!hasPhoto}
               className="rounded-md bg-ink px-6 py-3 text-sm uppercase tracking-[0.2em] text-paper transition-colors hover:bg-accent disabled:opacity-40"
             >
-              Κατέβασε
+              Αποθήκευση
             </button>
             <button
               onClick={share}

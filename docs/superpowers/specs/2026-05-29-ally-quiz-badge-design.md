@@ -85,7 +85,7 @@ type Question = { id: string; category: Category; prompt: string; options: Optio
   chevron stripes).
 - Caption band: "Ally · WhyPride.gr".
 - Empty state before upload: silhouette placeholder so the frame is visible.
-- Actions: **Κατέβασε** (`canvas.toBlob`, guard `null`, filename `whypride-ally-badge.png`),
+- Actions: **Αποθήκευση** (`canvas.toBlob`, guard `null`, filename `whypride-ally-badge.png`),
   **Μοιράσου** (`navigator.canShare({ files })` check → `navigator.share`, else download).
 - Privacy line: "Η φωτογραφία μένει στη συσκευή σου."
 - Restart/regenerate without page reload; close the `ImageBitmap` on replacement/unmount.
