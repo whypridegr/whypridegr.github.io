@@ -19,7 +19,8 @@ export const parallels: Parallel[] = [
     against: "Κατά της ψήφου των γυναικών",
     quote:
       "«Η θέση της γυναίκας είναι το σπίτι. Αν μπλέξει με την πολιτική, θα διαλυθεί η οικογένεια.»",
-    modern: "«Αν τους αφήσουμε να παντρευτούν, θα διαλυθεί ο θεσμός της οικογένειας.»",
+    modern:
+      "«Αν τους αφήσουμε να παντρευτούν, θα διαλυθεί ο θεσμός της οικογένειας.»",
     source: {
       note: "Στη δεκαετία του 1910, φυλλάδια κατά της ψήφου των γυναικών προειδοποιούσαν ότι θα γινόταν «καταστροφέας της οικογένειας», χρησιμοποιώντας τον ρόλο της μητέρας ως επιχείρημα.",
       links: [
@@ -96,7 +97,7 @@ export const parallels: Parallel[] = [
       links: [
         {
           label: "Δήλωση για το Athens Pride 2024",
-          url: "https://www.antenna.gr/Politics/article/4/916660/",
+          url: "https://antenna.gr/eidiseis/article/4/916660/athens-pride-2024-elliniki-lysi-oi-dimosies-parelaseis-ofeiloyn-na-proagoyn-arxes-kai-axies",
         },
       ],
     },

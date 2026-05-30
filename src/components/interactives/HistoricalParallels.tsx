@@ -5,11 +5,25 @@ import { Flip } from "gsap/Flip";
 import { useGSAP } from "@gsap/react";
 import type { Parallel } from "@/content/parallels";
 import { parallels } from "@/content/parallels";
-import { CiteList } from "@/components/primitives/CiteList";
+import { TelegraphSheet } from "@/components/interactives/TelegraphSheet";
 
 if (typeof window !== "undefined") gsap.registerPlugin(Flip, useGSAP);
 
 const TILTS = [-0.7, 0.5, -0.4];
+
+// The newspaper fonts only matter once someone opens a clipping, so we fetch
+// them on first open rather than on every page load (lighter, fewer 3rd-party
+// requests for visitors who never open one).
+let fontsRequested = false;
+function ensureTelegraphFonts() {
+  if (fontsRequested || typeof document === "undefined") return;
+  fontsRequested = true;
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href =
+    "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Courier+Prime:wght@400;700&display=swap";
+  document.head.appendChild(link);
+}
 
 export function HistoricalParallels() {
   const container = useRef<HTMLDivElement>(null);
@@ -67,6 +81,7 @@ export function HistoricalParallels() {
 
   const open = (i: number) => {
     if (expanded !== null || closing.current) return;
+    ensureTelegraphFonts();
     lastTrigger.current = document.activeElement as HTMLElement | null;
     document.body.style.overflow = "hidden";
     setExpanded(i);
@@ -214,81 +229,33 @@ export function HistoricalParallels() {
             className="fixed inset-0 z-[60] bg-ink/85 backdrop-blur-md"
             aria-hidden
           />
+          <button
+            ref={closeRef}
+            onClick={close}
+            aria-label="Κλείσιμο"
+            className="fixed right-4 top-4 z-[62] flex size-10 items-center justify-center rounded-full bg-ink/80 text-paper shadow-lg backdrop-blur transition-colors hover:bg-ink"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              className="size-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
           <div
             ref={sheetRef}
             role="dialog"
             aria-modal="true"
             aria-label={`Τότε και σήμερα: ${current.against}`}
-            className="fixed left-1/2 top-1/2 z-[61] max-h-[88vh] w-[min(92vw,620px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto"
+            className="fixed left-1/2 top-1/2 z-[61] max-h-[92vh] w-[min(94vw,812px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto"
           >
-            <article className="paper torn-both px-6 pb-14 pt-10 md:px-12 md:pb-16 md:pt-12">
-              <div className="flex items-center justify-between border-b border-[#c3b79b] pb-2 font-sans text-[0.66rem] uppercase tracking-[0.22em] text-[#7d7257]">
-                <span>Τότε · {current.era}</span>
-                <button
-                  ref={closeRef}
-                  onClick={close}
-                  aria-label="Κλείσιμο"
-                  className="text-[#9b3520] transition-opacity hover:opacity-70"
-                >
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="size-4"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden
-                  >
-                    <path d="M18 6 6 18M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-
-              <h4 className="mt-4 text-2xl font-bold uppercase leading-tight tracking-tight">
-                {current.against}
-              </h4>
-              <blockquote className="mt-3 text-2xl leading-snug md:text-[1.8rem]">
-                {current.quote}
-              </blockquote>
-
-              <div className="mt-8 border-t border-dashed border-[#b3a684] pt-5">
-                <span className="font-sans text-[0.66rem] uppercase tracking-[0.22em] text-[#9b3520]">
-                  Σήμερα
-                </span>
-                <p className="mt-2 text-xl leading-relaxed md:text-2xl">
-                  {current.modern}
-                </p>
-              </div>
-
-              {(current.source || current.greek) && (
-                <div className="mt-8 border-t border-dashed border-[#b3a684] pt-5 font-sans text-sm text-[#5c5440]">
-                  <span className="text-[0.66rem] uppercase tracking-[0.22em] text-[#9b3520]">
-                    Πηγές
-                  </span>
-                  {current.source && (
-                    <div className="mt-3">
-                      <span className="text-[0.66rem] uppercase tracking-[0.22em] text-[#7d7257]">
-                        Ιστορικά
-                      </span>
-                      <div className="mt-1">
-                        <CiteList cite={current.source} />
-                      </div>
-                    </div>
-                  )}
-                  {current.greek && (
-                    <div className="mt-5">
-                      <span className="text-[0.66rem] uppercase tracking-[0.22em] text-[#7d7257]">
-                        Ελλάδα, σήμερα
-                      </span>
-                      <div className="mt-1">
-                        <CiteList cite={current.greek} />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </article>
+            <TelegraphSheet parallel={current} />
           </div>
         </>,
           document.body,
