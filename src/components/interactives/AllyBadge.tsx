@@ -15,7 +15,14 @@ const STYLES: { key: StyleKey; label: string }[] = [
   { key: "progress", label: "Πρόοδος" },
 ];
 
-const SPECTRUM = ["#e40303", "#ff8c00", "#ffed00", "#008026", "#004dff", "#750787"];
+const SPECTRUM = [
+  "#e40303",
+  "#ff8c00",
+  "#ffed00",
+  "#008026",
+  "#004dff",
+  "#750787",
+];
 const TRANS = ["#5bcefa", "#f5a9b8", "#ffffff", "#f5a9b8", "#5bcefa"];
 const PROGRESS_INNER = ["#000000", "#613915", "#5bcefa", "#f5a9b8", "#ffffff"];
 
@@ -192,7 +199,7 @@ export function AllyBadge({ onRestart }: { onRestart: () => void }) {
 
         <div>
           <label className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-ink px-5 py-3 text-sm uppercase tracking-[0.2em] text-paper transition-colors hover:bg-accent">
-            {hasPhoto ? "Άλλαξε φωτογραφία" : "Ανέβασε φωτογραφία"}
+            {hasPhoto ? "Άλλαξε φωτογραφία" : "Διάλεξε φωτογραφία"}
             <input
               type="file"
               accept="image/*"

@@ -9,7 +9,7 @@ export const sources: Source[] = [
   {
     org: "FRA",
     title: "EU LGBTIQ Survey III (2024)",
-    url: "https://fra.europa.eu/en/publication/2024/lgbtiq-equality",
+    url: "https://fra.europa.eu/en/publications-and-resources/data-and-maps/2024/eu-lgbtiq-survey-iii",
     note: "Στοιχεία για ορατότητα, διακρίσεις και φόβο σε 30 χώρες.",
   },
   {
