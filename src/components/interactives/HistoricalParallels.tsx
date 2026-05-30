@@ -1,112 +1,325 @@
-import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { Flip } from "gsap/Flip";
+import { useGSAP } from "@gsap/react";
 import type { Parallel } from "@/content/parallels";
 import { parallels } from "@/content/parallels";
-import { Popover } from "@/components/primitives/Popover";
 import { CiteList } from "@/components/primitives/CiteList";
+
+if (typeof window !== "undefined") gsap.registerPlugin(Flip, useGSAP);
 
 const TILTS = [-0.7, 0.5, -0.4];
 
 export function HistoricalParallels() {
-  return (
-    <div className="newsprint mx-auto max-w-2xl space-y-16">
-      {parallels.map((p, i) => (
-        <Clipping key={i} parallel={p} tilt={TILTS[i % TILTS.length]} />
-      ))}
-    </div>
+  const container = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const backdropRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const lastTrigger = useRef<HTMLElement | null>(null);
+
+  const closing = useRef(false);
+
+  const [expanded, setExpanded] = useState<number | null>(null);
+  const [showSources, setShowSources] = useState(false);
+
+  const reduced =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // OPEN: once the sheet has rendered, grow it from the clicked card to centre.
+  useGSAP(
+    () => {
+      if (expanded === null) return;
+      const sheet = sheetRef.current;
+      const card = cardRefs.current[expanded];
+      if (!sheet || !card) return;
+
+      gsap.fromTo(
+        backdropRef.current,
+        { autoAlpha: 0 },
+        { autoAlpha: 1, duration: reduced ? 0 : 0.35, ease: "power1.out" },
+      );
+
+      if (reduced) {
+        closeRef.current?.focus();
+        return;
+      }
+
+      // Snap the (final, centred) sheet onto the clicked card, capture that as
+      // the START, restore the sheet to its final layout, then animate START to
+      // final: the sheet grows from the card to the centre of the screen.
+      Flip.fit(sheet, card, { absolute: true, scale: true });
+      const startState = Flip.getState(sheet);
+      gsap.set(sheet, { clearProps: "all" });
+      Flip.from(startState, {
+        duration: 0.65,
+        ease: "power3.inOut",
+        absolute: true,
+        scale: true,
+        onComplete: () => closeRef.current?.focus(),
+      });
+    },
+    { dependencies: [expanded], scope: container },
   );
-}
 
-function Clipping({ parallel, tilt }: { parallel: Parallel; tilt: number }) {
-  const [open, setOpen] = useState(false);
+  // Reveal the sources block with a small unfold when unlocked.
+  useGSAP(
+    () => {
+      if (!showSources || reduced) return;
+      gsap.from("[data-sources]", {
+        height: 0,
+        autoAlpha: 0,
+        duration: 0.4,
+        ease: "power2.out",
+      });
+    },
+    { dependencies: [showSources], scope: container },
+  );
+
+  const { contextSafe } = useGSAP({ scope: container });
+
+  const open = (i: number) => {
+    if (expanded !== null || closing.current) return;
+    lastTrigger.current = document.activeElement as HTMLElement | null;
+    document.body.style.overflow = "hidden";
+    setShowSources(false);
+    setExpanded(i);
+  };
+
+  const finishClose = () => {
+    document.body.style.overflow = "";
+    closing.current = false;
+    setExpanded(null);
+    setShowSources(false);
+    if (lastTrigger.current?.isConnected) lastTrigger.current.focus();
+  };
+
+  const close = contextSafe(() => {
+    if (closing.current) return;
+    closing.current = true;
+    const sheet = sheetRef.current;
+    const card = expanded !== null ? cardRefs.current[expanded] : null;
+    gsap.to(backdropRef.current, {
+      autoAlpha: 0,
+      duration: reduced ? 0 : 0.3,
+      ease: "power1.in",
+    });
+    if (reduced || !sheet || !card) {
+      finishClose();
+      return;
+    }
+    // Cancel any in-flight open tween, then shrink the sheet back onto the card.
+    gsap.killTweensOf(sheet);
+    Flip.fit(sheet, card, {
+      duration: 0.5,
+      ease: "power3.inOut",
+      absolute: true,
+      scale: true,
+      onComplete: finishClose,
+    });
+  });
+
+  // Safety net: never leave the page scroll-locked if we unmount mid-open.
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  // Escape closes; basic Tab trap inside the open sheet.
+  useEffect(() => {
+    if (expanded === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        close();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const sheet = sheetRef.current;
+      if (!sheet) return;
+      const items = sheet.querySelectorAll<HTMLElement>(
+        'button, [href], [tabindex]:not([tabindex="-1"])',
+      );
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey && (active === first || !sheet.contains(active))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (active === last || !sheet.contains(active))) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+    // `close` is stable enough for this lifecycle; re-bind only on open/close.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expanded]);
+
+  const current = expanded !== null ? parallels[expanded] : null;
 
   return (
-    <div
-      style={{
-        transform: `rotate(${tilt}deg)`,
-        filter: "drop-shadow(0 12px 16px rgba(40,30,15,0.22))",
-      }}
-    >
-      <article className="paper torn-bottom px-6 pb-10 pt-6 md:px-10 md:pb-12 md:pt-8">
-        {/* dateline / masthead */}
-        <div className="flex items-center justify-between border-b border-[#c3b79b] pb-2 font-sans text-[0.66rem] uppercase tracking-[0.22em] text-[#7d7257]">
-          <div className="flex items-center gap-2">
-            Τότε
-            {parallel.source && (
-              <Popover
-                label="ⓘ"
-                ariaLabel="Ιστορική πηγή"
-                align="start"
-                triggerClassName="no-underline text-[#9b3520]"
-              >
-                <CiteList cite={parallel.source} />
-              </Popover>
-            )}
-          </div>
-          <span>{parallel.era}</span>
-        </div>
-
-        {/* headline + lead */}
-        <h4 className="mt-4 text-xl font-bold uppercase leading-tight tracking-tight">
-          {parallel.against}
-        </h4>
-        <blockquote className="mt-3 text-2xl leading-snug md:text-[1.7rem]">
-          {parallel.quote}
-        </blockquote>
-
-        {!open && (
-          <button
-            onClick={() => setOpen(true)}
-            aria-expanded={open}
-            className="mt-6 inline-flex items-center gap-2 font-sans text-xs uppercase tracking-[0.2em] text-[#9b3520] transition-opacity hover:opacity-70"
-          >
-            Ξεδίπλωσε το σήμερα
-            <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </button>
-        )}
-
-        <AnimatePresence initial={false}>
-          {open && (
-            <motion.div
-              initial={{ height: 0 }}
-              animate={{ height: "auto" }}
-              transition={{ duration: 0.45, ease: [0.2, 0.7, 0.2, 1] }}
-              className="overflow-hidden"
-              style={{ perspective: 900 }}
+    <div ref={container} className="newsprint mx-auto max-w-2xl space-y-16">
+      {parallels.map((p, i) => (
+        <div
+          key={i}
+          ref={(el) => {
+            cardRefs.current[i] = el;
+          }}
+          style={{
+            transform: `rotate(${TILTS[i % TILTS.length]}deg)`,
+            filter: "drop-shadow(0 12px 16px rgba(40,30,15,0.22))",
+          }}
+        >
+          <article className="paper torn-bottom px-6 pb-10 pt-6 md:px-10 md:pb-12 md:pt-8">
+            <div className="flex items-center justify-between border-b border-[#c3b79b] pb-2 font-sans text-[0.66rem] uppercase tracking-[0.22em] text-[#7d7257]">
+              <span>Τότε</span>
+              <span>{p.era}</span>
+            </div>
+            <h4 className="mt-4 text-xl font-bold uppercase leading-tight tracking-tight">
+              {p.against}
+            </h4>
+            <blockquote className="mt-3 text-2xl leading-snug md:text-[1.7rem]">
+              {p.quote}
+            </blockquote>
+            <button
+              onClick={() => open(i)}
+              className="mt-6 inline-flex items-center gap-2 font-sans text-xs uppercase tracking-[0.2em] text-[#9b3520] transition-opacity hover:opacity-70"
             >
-              <motion.div
-                initial={{ rotateX: -88, opacity: 0 }}
-                animate={{ rotateX: 0, opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.08, ease: [0.2, 0.7, 0.2, 1] }}
-                style={{ transformOrigin: "top center" }}
-                className="mt-6 border-t border-dashed border-[#b3a684] pt-4"
+              Άνοιξε την εφημερίδα
+              <svg
+                viewBox="0 0 24 24"
+                className="size-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
               >
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
+              </svg>
+            </button>
+          </article>
+        </div>
+      ))}
+
+      {/* Expanded reading view */}
+      {current && (
+        <>
+          <div
+            ref={backdropRef}
+            onClick={close}
+            className="fixed inset-0 z-40 bg-ink/55 backdrop-blur-sm"
+            aria-hidden
+          />
+          <div
+            ref={sheetRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Τότε και σήμερα: ${current.against}`}
+            className="fixed left-1/2 top-1/2 z-50 max-h-[85vh] w-[min(92vw,640px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto"
+          >
+            <article className="paper px-6 pb-10 pt-6 md:px-12 md:pb-14 md:pt-10">
+              <div className="flex items-center justify-between border-b border-[#c3b79b] pb-2 font-sans text-[0.66rem] uppercase tracking-[0.22em] text-[#7d7257]">
+                <span>Τότε · {current.era}</span>
+                <button
+                  ref={closeRef}
+                  onClick={close}
+                  aria-label="Κλείσιμο"
+                  className="text-[#9b3520] transition-opacity hover:opacity-70"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="size-4"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden
+                  >
+                    <path d="M18 6 6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <h4 className="mt-4 text-2xl font-bold uppercase leading-tight tracking-tight">
+                {current.against}
+              </h4>
+              <blockquote className="mt-3 text-2xl leading-snug md:text-[1.8rem]">
+                {current.quote}
+              </blockquote>
+
+              <div className="mt-8 border-t border-dashed border-[#b3a684] pt-5">
                 <span className="font-sans text-[0.66rem] uppercase tracking-[0.22em] text-[#9b3520]">
                   Σήμερα
                 </span>
                 <p className="mt-2 text-xl leading-relaxed md:text-2xl">
-                  {parallel.modern}
+                  {current.modern}
                 </p>
-                {parallel.greek && (
-                  <div className="mt-4 flex items-center gap-2 font-sans text-[0.66rem] uppercase tracking-[0.22em] text-[#7d7257]">
-                    Ελλάδα, σήμερα
-                    <Popover
-                      label="ⓘ"
-                      ariaLabel="Σύγχρονη ελληνική πηγή"
-                      align="start"
-                      triggerClassName="no-underline text-[#9b3520]"
+              </div>
+
+              {(current.source || current.greek) && (
+                <div className="mt-8">
+                  {!showSources ? (
+                    <button
+                      onClick={() => setShowSources(true)}
+                      className="inline-flex items-center gap-2 rounded-md border border-[#9b3520] px-4 py-2 font-sans text-xs uppercase tracking-[0.2em] text-[#9b3520] transition-colors hover:bg-[#9b3520] hover:text-[#f7f0df]"
                     >
-                      <CiteList cite={parallel.greek} />
-                    </Popover>
-                  </div>
-                )}
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </article>
+                      Δες τις πηγές
+                      <svg
+                        viewBox="0 0 24 24"
+                        className="size-4"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden
+                      >
+                        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    </button>
+                  ) : (
+                    <div
+                      data-sources
+                      className="overflow-hidden border-t border-dashed border-[#b3a684] pt-5 font-sans text-sm text-[#5c5440]"
+                    >
+                      {current.source && (
+                        <div>
+                          <span className="text-[0.66rem] uppercase tracking-[0.22em] text-[#7d7257]">
+                            Ιστορικά
+                          </span>
+                          <div className="mt-1">
+                            <CiteList cite={current.source} />
+                          </div>
+                        </div>
+                      )}
+                      {current.greek && (
+                        <div className={current.source ? "mt-5" : undefined}>
+                          <span className="text-[0.66rem] uppercase tracking-[0.22em] text-[#7d7257]">
+                            Ελλάδα, σήμερα
+                          </span>
+                          <div className="mt-1">
+                            <CiteList cite={current.greek} />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </article>
+          </div>
+        </>
+      )}
     </div>
   );
 }
