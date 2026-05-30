@@ -44,7 +44,9 @@ export function pickQuestions(
   rng: () => number = Math.random,
 ): Question[] {
   if (n > pool.length) {
-    throw new Error(`pickQuestions: requested ${n} but pool has ${pool.length}`);
+    throw new Error(
+      `pickQuestions: requested ${n} but pool has ${pool.length}`,
+    );
   }
   return shuffled(pool, rng)
     .slice(0, n)
@@ -82,7 +84,7 @@ const TIERS: Tier[] = [
     key: "high",
     label: "Είσαι ήδη σύμμαχος",
     message:
-      "Ακούς, σέβεσαι και δεν χρειάζεσαι χειροκρότημα γι' αυτό. Κράτα το έτσι — και πάρε το badge σου.",
+      "Ακούς, σέβεσαι και δεν χρειάζεσαι χειροκρότημα γι' αυτό. Κράτα το έτσι, και πάρε το badge σου.",
   },
   {
     key: "mid",
@@ -94,7 +96,7 @@ const TIERS: Tier[] = [
     key: "low",
     label: "Αξίζει μια δεύτερη ματιά",
     message:
-      "Κάποιες απαντήσεις πατάνε πάνω σε στερεότυπα που πονάνε. Καμία ντροπή — γι' αυτό υπάρχει αυτή η σελίδα. Το badge σου σε περιμένει έτσι κι αλλιώς.",
+      "Κάποιες απαντήσεις πατάνε πάνω σε στερεότυπα που πονάνε. Γι' αυτό υπάρχει αυτή η σελίδα. Το badge σου σε περιμένει έτσι κι αλλιώς.",
   },
 ];
 

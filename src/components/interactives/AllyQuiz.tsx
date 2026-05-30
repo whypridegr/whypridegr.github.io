@@ -94,7 +94,7 @@ export function AllyQuiz() {
   return (
     <div className="reading-width">
       {/* progress */}
-      <ol className="mb-4 flex gap-2" aria-label="Πρόοδος">
+      <ol className="mb-10 flex gap-2" aria-label="Πρόοδος">
         {questions.map((q, i) => (
           <li
             key={q.id}
@@ -110,9 +110,6 @@ export function AllyQuiz() {
           />
         ))}
       </ol>
-      <p className="mb-10 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-        Ερώτηση {index + 1} από {questions.length} · μπορείς να αλλάξεις γνώμη
-      </p>
 
       <AnimatePresence mode="wait">
         <motion.div key={current.id} {...fade}>

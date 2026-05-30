@@ -43,7 +43,19 @@ function Card({ scenario }: { scenario: Scenario }) {
           <p className="mt-3 leading-relaxed">{scenario.reveal}</p>
           {scenario.source && (
             <p className="mt-3 text-xs text-muted-foreground">
-              Πηγή: {scenario.source}
+              Πηγή:{" "}
+              {scenario.url ? (
+                <a
+                  href={scenario.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-border underline-offset-2 hover:text-accent hover:decoration-accent"
+                >
+                  {scenario.source}
+                </a>
+              ) : (
+                scenario.source
+              )}
             </p>
           )}
         </div>

@@ -19,8 +19,14 @@ export function AboutContent() {
         </p>
 
         <p>
-          Όλα τα στοιχεία είναι τεκμηριωμένα και ελέγξιμα. Αν κάτι είναι λάθος,
-          στείλε μας.
+          Όλα τα στοιχεία είναι τεκμηριωμένα και ελέγξιμα. Αν κάτι είναι λάθος,{" "}
+          <a
+            href="mailto:whypridegr@gmail.com"
+            className="text-ink underline decoration-border underline-offset-4 hover:decoration-accent"
+          >
+            στείλε μας
+          </a>
+          .
         </p>
 
         <p>
@@ -43,7 +49,13 @@ export function AboutContent() {
         <p className="text-base text-muted-foreground">
           Φτιαγμένο στην Αθήνα. Αν θες να συμβάλεις (με διόρθωση, ή απλώς μια
           ιδέα), γράψε στο{" "}
-          <span className="text-ink">whypridegr@gmail.com</span>.
+          <a
+            href="mailto:whypridegr@gmail.com"
+            className="text-ink underline decoration-border underline-offset-4 hover:decoration-accent"
+          >
+            whypridegr@gmail.com
+          </a>
+          .
         </p>
       </div>
     </div>

@@ -9,15 +9,15 @@
 σκέψη κάποιον που δεν ξέρει, άλλες λένε κάτι καινούριο σε όποιον ήδη ξέρει. Στην
 πορεία απαντάει και κάποιες απορίες που οι περισσότεροι δεν τολμάνε να πουν δυνατά.
 
-Ζωντανά: [whypride.vercel.app](https://whypride.vercel.app)
+Ζωντανά: [whypride.gr](https://whypride.gr)
 
 ## Τεχνολογίες
 
-- **Astro 6** — static site με React islands
-- **React 19** — τα διαδραστικά κομμάτια
-- **Tailwind CSS v4** — styling, με OKLCH χρωματικά tokens και dark mode
-- **motion** — animations
-- **TypeScript** + **bun**
+- **Astro 6** για static site με React islands
+- **React 19** στα διαδραστικά κομμάτια
+- **Tailwind CSS v4** για styling, με OKLCH tokens και dark mode
+- **motion** για τα animations
+- **TypeScript** και **bun**
 
 ## Τοπική ανάπτυξη
 
@@ -51,6 +51,16 @@ src/
 σενάρια, σχόλια, κλείσιμο, και στο τέλος το υλικό αναφοράς (γλωσσάρι, χρονολόγιο,
 πηγές). Το `/quiz` δίνει ένα σύντομο τεστ με badge generator στο τέλος.
 
+Τα σενάρια στο «Μάντεψε πού συνέβη» παραπέμπουν σε δημοσιευμένα περιστατικά (ΜΜΕ,
+FRA, Συνήγορος του Πολίτη). Αν βρεις κάτι λάθος ή αστήρικτο, πες μας.
+
+## Συνεισφορά
+
+Ο κώδικας είναι ανοιχτός. Διορθώσεις, νέες πηγές ή ιδέες είναι ευπρόσδεκτες:
+άνοιξε ένα [issue](https://github.com/whypridegr/whypridegr.github.io/issues/new)
+ή στείλε pull request. Για οτιδήποτε άλλο, στείλε mail στο whypridegr@gmail.com.
+
 ## Deploy
 
-Auto-deploy στο Vercel σε κάθε push στο `main`.
+Auto-deploy μέσω GitHub Actions σε κάθε push στο `main`, με δημοσίευση στο GitHub
+Pages και custom domain [whypride.gr](https://whypride.gr).

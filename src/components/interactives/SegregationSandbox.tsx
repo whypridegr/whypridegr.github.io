@@ -175,13 +175,8 @@ export function SegregationSandbox() {
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_18rem] lg:items-start">
-      <p className="reading-width leading-relaxed text-muted-foreground lg:col-span-2">
-        Δες πώς μετακινούνται τα ανθρωπάκια όταν το καθένα θέλει απλώς λίγους
-        «όμοιούς» του κοντά. Πιο κάτω ορίζεις εσύ πόσο όμοιους γείτονες ζητάει ο
-        καθένας, και πατάς «Τρέξε».
-      </p>
-
       {/* The grid */}
+
       <div
         role="img"
         aria-label={`Πλέγμα προσομοίωσης δύο ομάδων. Διαχωρισμός ${Math.round(
@@ -306,12 +301,7 @@ export function SegregationSandbox() {
           <span className="text-ink">μικρή</span> προτίμηση έφτιαξε έναν κόσμο
           σχεδόν εντελώς χωρισμένο, χωρίς να το αποφάσισε ποτέ κανείς. Έτσι
           λειτουργεί και η προκατάληψη: όχι ως μίσος, αλλά ως άθροισμα μικρών,
-          «λογικών» επιλογών.{" "}
-          <span className="text-ink">
-            Φαντάσου τα κόκκινα ανθρωπάκια ως όσους είναι υπέρ του Pride και τα
-            μπλε ως όσους είναι κατά: κανείς δεν χρειάστηκε να μισήσει για να
-            καταλήξουμε χωρισμένοι.
-          </span>
+          «λογικών» επιλογών.
         </p>
       )}
     </div>
