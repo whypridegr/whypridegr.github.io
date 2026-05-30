@@ -63,15 +63,18 @@ export function HistoricalParallels() {
     { dependencies: [expanded], scope: container },
   );
 
-  // Reveal the sources block with a small unfold when unlocked.
+  // Reveal the sources by unfolding them downward, like a folded paper flap.
   useGSAP(
     () => {
       if (!showSources || reduced) return;
       gsap.from("[data-sources]", {
         height: 0,
         autoAlpha: 0,
-        duration: 0.4,
-        ease: "power2.out",
+        rotateX: -92,
+        transformOrigin: "top center",
+        transformPerspective: 800,
+        duration: 0.7,
+        ease: "power3.out",
       });
     },
     { dependencies: [showSources], scope: container },
@@ -223,9 +226,18 @@ export function HistoricalParallels() {
             role="dialog"
             aria-modal="true"
             aria-label={`Τότε και σήμερα: ${current.against}`}
-            className="fixed left-1/2 top-1/2 z-[61] max-h-[88vh] w-[min(92vw,620px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-sm shadow-2xl"
+            className="fixed left-1/2 top-1/2 z-[61] max-h-[88vh] w-[min(92vw,620px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto"
           >
-            <article className="paper px-6 pb-10 pt-6 md:px-12 md:pb-14 md:pt-10">
+            <article className="paper torn-both relative px-6 pb-14 pt-10 md:px-12 md:pb-16 md:pt-12">
+              {/* Extra wear: heavier blotches + two fold creases, multiplied
+                  over the base paper so the opened sheet looks well-thumbed. */}
+              <div
+                aria-hidden
+                className="paper-distress pointer-events-none absolute inset-0 mix-blend-multiply"
+              />
+              {/* Content layer sits above the distress overlay so the type
+                  stays crisp while the stains only weather the paper. */}
+              <div className="relative">
               <div className="flex items-center justify-between border-b border-[#c3b79b] pb-2 font-sans text-[0.66rem] uppercase tracking-[0.22em] text-[#7d7257]">
                 <span>Τότε · {current.era}</span>
                 <button
@@ -316,6 +328,7 @@ export function HistoricalParallels() {
                   )}
                 </div>
               )}
+              </div>
             </article>
           </div>
         </>

@@ -201,6 +201,28 @@
     box-shadow: inset 0 0 70px rgba(74, 48, 16, 0.28);
   }
 
+  /* Extra wear for the opened sheet: heavier foxing blotches plus two faint
+     horizontal fold creases. Meant to sit in a mix-blend-multiply overlay on
+     top of .paper so it darkens the sheet like a well-thumbed clipping. */
+  .paper-distress {
+    background-image:
+      radial-gradient(30% 20% at 20% 35%, rgba(92, 60, 24, 0.55), transparent 60%),
+      radial-gradient(24% 16% at 72% 58%, rgba(82, 54, 22, 0.5), transparent 60%),
+      radial-gradient(18% 13% at 48% 14%, rgba(72, 48, 20, 0.55), transparent 65%),
+      radial-gradient(16% 22% at 88% 82%, rgba(78, 50, 20, 0.5), transparent 60%),
+      radial-gradient(14% 18% at 10% 70%, rgba(70, 46, 18, 0.45), transparent 62%),
+      linear-gradient(
+        transparent calc(34% - 1px),
+        rgba(60, 40, 15, 0.16) 34%,
+        transparent calc(34% + 1px)
+      ),
+      linear-gradient(
+        transparent calc(67% - 1px),
+        rgba(60, 40, 15, 0.14) 67%,
+        transparent calc(67% + 1px)
+      );
+  }
+
   /* Hand-torn bottom edge (fixed ~14px torn strip, masked so the drop-shadow
      follows the tear). */
   .torn-bottom {
@@ -210,6 +232,23 @@
         bottom left / 100% 14px no-repeat;
     mask:
       linear-gradient(#000, #000) top left / 100% calc(100% - 13px) no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='10' preserveAspectRatio='none' viewBox='0 0 100 10'%3E%3Cpath fill='black' d='M0 0 H100 V4 L96 7 L92 3 L88 8 L84 5 L80 9 L75 4 L70 8 L65 5 L60 9 L55 4 L50 8 L45 5 L40 9 L35 4 L30 8 L25 5 L20 9 L15 4 L10 8 L5 5 L0 7 Z'/%3E%3C/svg%3E")
+        bottom left / 100% 14px no-repeat;
+  }
+
+  /* Torn on BOTH the top and bottom edge (left/right stay cut), for the opened
+     sheet so it never reads as a perfect rectangle. */
+  .torn-both {
+    -webkit-mask:
+      linear-gradient(#000, #000) center / 100% calc(100% - 26px) no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='10' preserveAspectRatio='none' viewBox='0 0 100 10'%3E%3Cpath fill='black' d='M0 10 H100 V6 L96 3 L92 7 L88 2 L84 5 L80 1 L75 6 L70 2 L65 5 L60 1 L55 6 L50 2 L45 5 L40 1 L35 6 L30 2 L25 5 L20 1 L15 6 L10 2 L5 5 L0 3 Z'/%3E%3C/svg%3E")
+        top left / 100% 14px no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='10' preserveAspectRatio='none' viewBox='0 0 100 10'%3E%3Cpath fill='black' d='M0 0 H100 V4 L96 7 L92 3 L88 8 L84 5 L80 9 L75 4 L70 8 L65 5 L60 9 L55 4 L50 8 L45 5 L40 9 L35 4 L30 8 L25 5 L20 9 L15 4 L10 8 L5 5 L0 7 Z'/%3E%3C/svg%3E")
+        bottom left / 100% 14px no-repeat;
+    mask:
+      linear-gradient(#000, #000) center / 100% calc(100% - 26px) no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='10' preserveAspectRatio='none' viewBox='0 0 100 10'%3E%3Cpath fill='black' d='M0 10 H100 V6 L96 3 L92 7 L88 2 L84 5 L80 1 L75 6 L70 2 L65 5 L60 1 L55 6 L50 2 L45 5 L40 1 L35 6 L30 2 L25 5 L20 1 L15 6 L10 2 L5 5 L0 3 Z'/%3E%3C/svg%3E")
+        top left / 100% 14px no-repeat,
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='10' preserveAspectRatio='none' viewBox='0 0 100 10'%3E%3Cpath fill='black' d='M0 0 H100 V4 L96 7 L92 3 L88 8 L84 5 L80 9 L75 4 L70 8 L65 5 L60 9 L55 4 L50 8 L45 5 L40 9 L35 4 L30 8 L25 5 L20 9 L15 4 L10 8 L5 5 L0 7 Z'/%3E%3C/svg%3E")
         bottom left / 100% 14px no-repeat;
   }
