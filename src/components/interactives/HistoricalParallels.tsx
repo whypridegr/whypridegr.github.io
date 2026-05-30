@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import gsap from "gsap";
 import { Flip } from "gsap/Flip";
 import { useGSAP } from "@gsap/react";
@@ -158,7 +159,20 @@ export function HistoricalParallels() {
             filter: "drop-shadow(0 12px 16px rgba(40,30,15,0.22))",
           }}
         >
-          <article className="paper torn-bottom px-6 pb-10 pt-6 md:px-10 md:pb-12 md:pt-8">
+          {/* The whole clipping is the trigger, so a tap anywhere opens it. */}
+          <article
+            role="button"
+            tabIndex={0}
+            aria-label={`Άνοιξε την εφημερίδα: ${p.against}`}
+            onClick={() => open(i)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                open(i);
+              }
+            }}
+            className="paper torn-bottom block w-full cursor-pointer px-6 pb-10 pt-6 text-left transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9b3520] md:px-10 md:pb-12 md:pt-8"
+          >
             <div className="flex items-center justify-between border-b border-[#c3b79b] pb-2 font-sans text-[0.66rem] uppercase tracking-[0.22em] text-[#7d7257]">
               <span>Τότε</span>
               <span>{p.era}</span>
@@ -169,10 +183,7 @@ export function HistoricalParallels() {
             <blockquote className="mt-3 text-2xl leading-snug md:text-[1.7rem]">
               {p.quote}
             </blockquote>
-            <button
-              onClick={() => open(i)}
-              className="mt-6 inline-flex items-center gap-2 font-sans text-xs uppercase tracking-[0.2em] text-[#9b3520] transition-opacity hover:opacity-70"
-            >
+            <span className="mt-6 inline-flex items-center gap-2 font-sans text-xs uppercase tracking-[0.2em] text-[#9b3520]">
               Άνοιξε την εφημερίδα
               <svg
                 viewBox="0 0 24 24"
@@ -187,14 +198,16 @@ export function HistoricalParallels() {
                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
                 <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
               </svg>
-            </button>
+            </span>
           </article>
         </div>
       ))}
 
-      {/* Expanded reading view */}
-      {current && (
-        <>
+      {/* Expanded reading view, portaled to <body> so the fixed backdrop is
+          truly viewport-sized and never trapped by a transformed ancestor. */}
+      {current &&
+        createPortal(
+          <>
           <div
             ref={backdropRef}
             onClick={close}
@@ -277,8 +290,9 @@ export function HistoricalParallels() {
               )}
             </article>
           </div>
-        </>
-      )}
+        </>,
+          document.body,
+        )}
     </div>
   );
 }
