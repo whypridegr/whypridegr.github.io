@@ -29,19 +29,30 @@ export function ReflectiveComment() {
         {reflections.map((r, i) => (
           <li key={i} className="rounded-lg border border-border bg-card p-5">
             <div className="flex items-center gap-3">
-              {/* Generic placeholder avatar — these are invented names, not
-                  real people, so we don't dress them up with initials. */}
-              <div className="flex size-9 items-center justify-center rounded-full bg-secondary text-muted-foreground">
-                <svg
-                  viewBox="0 0 24 24"
-                  className="size-5"
-                  fill="currentColor"
-                  aria-hidden
-                >
-                  <circle cx="12" cy="8" r="4" />
-                  <path d="M4 20c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5Z" />
-                </svg>
-              </div>
+              {/* Illustrated avatar for the named cards (not photos of real
+                  people); the anonymous card keeps a neutral silhouette. */}
+              {r.avatar ? (
+                <img
+                  src={r.avatar}
+                  alt=""
+                  width={36}
+                  height={36}
+                  loading="lazy"
+                  className="size-9 shrink-0 rounded-full bg-secondary object-cover"
+                />
+              ) : (
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary text-muted-foreground">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="size-5"
+                    fill="currentColor"
+                    aria-hidden
+                  >
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 20c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5Z" />
+                  </svg>
+                </div>
+              )}
               <span className="text-sm text-muted-foreground">{r.author}</span>
             </div>
             <p className="mt-3 font-display text-lg leading-snug">{r.text}</p>

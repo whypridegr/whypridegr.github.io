@@ -64,3 +64,8 @@ FRA, Συνήγορος του Πολίτη). Αν βρεις κάτι λάθο�
 
 Auto-deploy μέσω GitHub Actions σε κάθε push στο `main`, με δημοσίευση στο GitHub
 Pages και custom domain [whypride.gr](https://whypride.gr).
+
+## Ευχαριστίες
+
+Τα avatar στα σχόλια είναι εικονογραφημένα (όχι φωτογραφίες πραγματικών ανθρώπων),
+φτιαγμένα με το [DiceBear](https://www.dicebear.com) (στυλ avataaars, του Pablo Stanley).

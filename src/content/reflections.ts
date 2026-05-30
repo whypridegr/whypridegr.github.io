@@ -1,5 +1,8 @@
 export type Reflection = {
   author: string;
+  /** Self-hosted illustrated avatar (not a photo of a real person). Omit for
+   *  the anonymous card, which keeps the neutral silhouette. */
+  avatar?: string;
   text: string;
   reflection: string;
   /** A believable "agree" tally. Fixed (not random) so SSR and the client
@@ -12,6 +15,7 @@ export type Reflection = {
 export const reflections: Reflection[] = [
   {
     author: "Μαρία Τ.",
+    avatar: "/avatars/maria.svg",
     text: "«Ας κάνουν ό,τι θέλουν, αλλά γιατί πρέπει να το βλέπω κι εγώ;»",
     reflection:
       "Το «δεν θέλω να το βλέπω» συχνά σημαίνει «θέλω να μην υπάρχει εκεί που είμαι εγώ». Ένα straight ζευγάρι που κρατιέται χέρι δεν σου ζητάει άδεια. Τι αλλάζει όταν το ζευγάρι είναι queer;",
@@ -19,6 +23,7 @@ export const reflections: Reflection[] = [
   },
   {
     author: "Γιώργος Π.",
+    avatar: "/avatars/giorgos.svg",
     text: "«Καλά όλα, αλλά γιατί να το λένε στα παιδιά;»",
     reflection:
       "Τα παιδιά ήδη ξέρουν ότι υπάρχουν διαφορετικές οικογένειες, τις βλέπουν στη γειτονιά. Το να υπάρχει μια λέξη γι' αυτό δεν τα μπερδεύει. Τα προστατεύει, αν τύχει να είναι τα ίδια queer.",
