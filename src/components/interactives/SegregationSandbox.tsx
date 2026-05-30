@@ -8,7 +8,9 @@ const SIZE = COLS * ROWS;
 const EMPTY = 0;
 const A = 1;
 const B = 2;
-const MAX_STEPS = 300;
+const MAX_STEPS = 200;
+const MAX_RUN_MS = 12000; // hard wall-clock cap so a high threshold can't run forever
+const STAGNATION_STEPS = 12; // stop once the segregation metric stops moving
 
 function makeGrid(): number[] {
   return Array.from({ length: SIZE }, () => {
@@ -177,12 +179,28 @@ export function SegregationSandbox() {
     }
 
     let steps = 0;
+    let stagnant = 0;
+    let prevSeg = segregation(gridRef.current, nb);
+    const startedAt = performance.now();
     const id = setInterval(() => {
       const { next, moved } = step(gridRef.current, nb, threshold);
       gridRef.current = next;
       setGrid(next);
       steps++;
-      if (moved === 0 || steps >= MAX_STEPS) {
+
+      // At a high threshold the system can oscillate forever (unhappy agents
+      // keep swapping without ever all settling). Stop once the segregation
+      // metric plateaus, or after a hard time/step cap, so it always finishes.
+      const segNow = segregation(next, nb);
+      stagnant = Math.abs(segNow - prevSeg) < 0.005 ? stagnant + 1 : 0;
+      prevSeg = segNow;
+
+      if (
+        moved === 0 ||
+        steps >= MAX_STEPS ||
+        stagnant >= STAGNATION_STEPS ||
+        performance.now() - startedAt > MAX_RUN_MS
+      ) {
         setRunning(false);
         setDone(true);
       }
