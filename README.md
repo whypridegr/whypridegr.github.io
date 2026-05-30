@@ -68,4 +68,4 @@ Pages και custom domain [whypride.gr](https://whypride.gr).
 ## Ευχαριστίες
 
 Τα avatar στα σχόλια είναι εικονογραφημένα (όχι φωτογραφίες πραγματικών ανθρώπων),
-φτιαγμένα με το [DiceBear](https://www.dicebear.com) (στυλ avataaars, του Pablo Stanley).
+φτιαγμένα με το [DiceBear](https://www.dicebear.com) (στυλ notionists του Zoish, CC BY 4.0).
