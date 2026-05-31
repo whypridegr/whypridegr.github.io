@@ -425,6 +425,19 @@ export const allyQuizPool: Question[] = [
     category: "Προνόμιο",
     prompt:
       "Στην αιμοδοσία της δουλειάς, ένας γκέι συνάδελφος δεν συμμετέχει και κάποιος τον πιέζει να πει γιατί. Τι κάνεις;",
+    cite: {
+      note: "Η απαγόρευση αιμοδοσίας για άνδρες που κάνουν σεξ με άνδρες ίσχυε στην Ελλάδα από τη δεκαετία του '80. Άρθηκε τον Ιανουάριο 2022 και επαναφέρθηκε το 2025 με απόφαση του Συμβουλίου της Επικρατείας.",
+      links: [
+        {
+          label: "Keep Talking Greece: άρση 2022",
+          url: "https://www.keeptalkinggreece.com/2022/01/11/blood-donation-gay-men-ban-lifted-greece/",
+        },
+        {
+          label: "AABB: επαναφορά 2025",
+          url: "https://www.aabb.org/news-resources/news/article/2025/04/08/greek-court-overturns-policy-allowing-blood-donation-from-msm",
+        },
+      ],
+    },
     options: [
       {
         id: "change-topic",
@@ -432,19 +445,6 @@ export const allyQuizPool: Question[] = [
         score: 2,
         feedback:
           "Σέβεσαι το ιατρικό του απόρρητο και ένα βάρος που δεν διάλεξε.",
-        cite: {
-          note: "Η απαγόρευση αιμοδοσίας για άνδρες που κάνουν σεξ με άνδρες ίσχυε στην Ελλάδα από τη δεκαετία του '80. Άρθηκε τον Ιανουάριο 2022 και επαναφέρθηκε το 2025 με απόφαση του Συμβουλίου της Επικρατείας.",
-          links: [
-            {
-              label: "Keep Talking Greece: άρση 2022",
-              url: "https://www.keeptalkinggreece.com/2022/01/11/blood-donation-gay-men-ban-lifted-greece/",
-            },
-            {
-              label: "AABB: επαναφορά 2025",
-              url: "https://www.aabb.org/news-resources/news/article/2025/04/08/greek-court-overturns-policy-allowing-blood-donation-from-msm",
-            },
-          ],
-        },
       },
       {
         id: "just-lie",

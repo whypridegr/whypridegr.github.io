@@ -20,6 +20,9 @@ export type Question = {
   category: Category;
   prompt: string;
   options: Option[];
+  /** Optional source for the question's factual background. Shown after the
+   *  user answers, regardless of which option they picked. */
+  cite?: Cite;
 };
 
 /** questionId -> chosen optionId */

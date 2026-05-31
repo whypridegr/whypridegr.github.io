@@ -1,17 +1,5 @@
 import type { Parallel } from "@/content/parallels";
 
-// Decorative ticker bulletins (period flavour, intentionally blurred as texture).
-const TICKER = [
-  [
-    "By Wire",
-    "Marconi House to commence regular wireless concerts this autumn",
-  ],
-  ["Shipping", "Atlantic liner docks at Southampton, six days from New York"],
-  ["The City", "The Pound stands firm upon the Exchange at week's close"],
-  ["Cricket", "Test Match — England 312 for 7 at the drawing of stumps"],
-  ["Weather", "Fair and bright over the southern counties; sea moderate"],
-];
-
 function CiteFootnote({
   label,
   cite,
@@ -90,13 +78,17 @@ export function TelegraphSheet({ parallel }: { parallel: Parallel }) {
           <div className="cell tg-blur">0.12&nbsp;$</div>
         </div>
 
-        {/* Ticker (blurred texture) */}
+        {/* Ticker — runs the real story (duplicated in the centre, so hidden
+            from screen readers, but shown legibly rather than blurred). */}
         <div className="ticker" aria-hidden="true">
           <div className="label">Stop&nbsp;Press</div>
           <div className="track-wrap">
-            <div className="track tg-blur">
+            <div className="track">
               {[0, 1].flatMap((run) =>
-                TICKER.map(([k, t], i) => (
+                [
+                  ["Τότε", parallel.quote],
+                  ["Σήμερα", parallel.modern],
+                ].map(([k, t], i) => (
                   <span className="item" key={`${run}-${i}`}>
                     <b>{k}:</b> {t}
                     <span className="sep" />

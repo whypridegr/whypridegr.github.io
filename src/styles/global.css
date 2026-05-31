@@ -364,21 +364,23 @@
 
 /* Blackletter reads badly in caps, so the display elements drop uppercase and
    letter-spacing and use weight 700 (per the design's gothic voice). Greek text
-   has no blackletter glyphs and gracefully falls back to Playfair Display. */
-.telegraph .nameplate h1,
-.telegraph h2.head,
-.telegraph .kicker,
-.telegraph .pullbar,
-.telegraph .ticker .label {
+   has no blackletter glyphs and gracefully falls back to Playfair Display.
+   Selectors carry an extra `.frame` so they out-specify the base uppercase
+   rules regardless of source order. */
+.telegraph .frame .nameplate h1,
+.telegraph .frame h2.head,
+.telegraph .frame .kicker,
+.telegraph .frame .pullbar,
+.telegraph .frame .ticker .label {
   text-transform: none;
   letter-spacing: 0;
   font-weight: 700;
 }
-.telegraph .nameplate h1 {
+.telegraph .frame .nameplate h1 {
   font-size: clamp(20px, 5.8vw, 48px);
   transform: scaleX(0.96);
 }
-.telegraph .col-right h2.head {
+.telegraph .frame .col-right h2.head {
   font-size: clamp(20px, 3.6vw, 32px);
 }
 

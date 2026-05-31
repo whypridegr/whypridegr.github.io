@@ -151,6 +151,8 @@ export function AllyQuiz() {
                   className="mt-6 border-l-2 border-accent pl-4 leading-relaxed text-muted-foreground"
                 >
                   {chosen.feedback}
+                  {/* Option-specific source, plus the question's own source
+                      which shows whichever option was picked. */}
                   {chosen.cite && (
                     <Popover
                       label="ⓘ"
@@ -159,6 +161,16 @@ export function AllyQuiz() {
                       triggerClassName="ml-2 no-underline text-muted-foreground"
                     >
                       <CiteList cite={chosen.cite} />
+                    </Popover>
+                  )}
+                  {current?.cite && (
+                    <Popover
+                      label="ⓘ"
+                      ariaLabel="Πηγή"
+                      align="start"
+                      triggerClassName="ml-2 no-underline text-muted-foreground"
+                    >
+                      <CiteList cite={current.cite} />
                     </Popover>
                   )}
                 </motion.div>
