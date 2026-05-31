@@ -2,7 +2,10 @@ import type { Parallel } from "@/content/parallels";
 
 // Decorative ticker bulletins (period flavour, intentionally blurred as texture).
 const TICKER = [
-  ["By Wire", "Marconi House to commence regular wireless concerts this autumn"],
+  [
+    "By Wire",
+    "Marconi House to commence regular wireless concerts this autumn",
+  ],
   ["Shipping", "Atlantic liner docks at Southampton, six days from New York"],
   ["The City", "The Pound stands firm upon the Exchange at week's close"],
   ["Cricket", "Test Match — England 312 for 7 at the drawing of stumps"],
@@ -47,7 +50,9 @@ export function TelegraphSheet({ parallel }: { parallel: Parallel }) {
           <div className="strap-l">
             <span className="tg-blur">Latest News from Around the World</span>
           </div>
-          <div className="strap-r tg-blur">One of the World's Great Newspapers</div>
+          <div className="strap-r tg-blur">
+            One of the World's Great Newspapers
+          </div>
         </div>
 
         <div className="nameplate">
@@ -139,7 +144,7 @@ export function TelegraphSheet({ parallel }: { parallel: Parallel }) {
           {/* Centre column — the real story */}
           <section className="col col-center">
             <div className="engraving eng-hero" aria-hidden="true">
-              <span className="tag">ΧΑΡΑΚΤΙΚΟ</span>
+              <span className="tag">ΕΙΚΟΝΑ</span>
             </div>
             <div className="kicker">
               <span className="lead">Τότε</span>
@@ -160,11 +165,17 @@ export function TelegraphSheet({ parallel }: { parallel: Parallel }) {
 
             <div
               className="kicker"
-              style={{ fontSize: "clamp(15px,2.2vw,22px)", letterSpacing: ".05em" }}
+              style={{
+                fontSize: "clamp(15px,2.2vw,22px)",
+                letterSpacing: ".05em",
+              }}
             >
               Σήμερα
             </div>
-            <p className="body center" style={{ fontSize: "clamp(12px,1.7vw,15px)" }}>
+            <p
+              className="body center"
+              style={{ fontSize: "clamp(12px,1.7vw,15px)" }}
+            >
               {parallel.modern}
             </p>
 
