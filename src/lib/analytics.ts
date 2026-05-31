@@ -72,12 +72,14 @@ export function analyticsActive(): boolean {
   return started;
 }
 
-/** Has the visitor already accepted or declined? (controls the banner.) */
+/** Has the visitor already accepted or declined? (controls the banner.)
+ *  We must read the *explicit* tri-state here: with opt_out_by_default,
+ *  has_opted_out_capturing() is already true for an undecided visitor, so
+ *  has_opted_in||has_opted_out is always true and would hide the banner from
+ *  everyone. "pending" means no choice has been made yet. */
 export function consentDecided(): boolean {
   if (typeof window === "undefined" || !started) return false;
-  return (
-    posthog.has_opted_in_capturing() || posthog.has_opted_out_capturing()
-  );
+  return posthog.get_explicit_consent_status() !== "pending";
 }
 
 /** Visitor accepted: start capturing (and remember the choice). */
