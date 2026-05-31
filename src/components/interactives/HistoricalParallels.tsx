@@ -11,6 +11,20 @@ if (typeof window !== "undefined") gsap.registerPlugin(Flip, useGSAP);
 
 const TILTS = [-0.7, 0.5, -0.4];
 
+// The newspaper fonts (incl. the UnifrakturCook blackletter masthead) only
+// matter once someone opens a clipping, so we fetch them on first open rather
+// than on every page load.
+let fontsRequested = false;
+function ensureTelegraphFonts() {
+  if (fontsRequested || typeof document === "undefined") return;
+  fontsRequested = true;
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href =
+    "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,800;0,900;1,700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Courier+Prime:wght@400;700&family=UnifrakturCook:wght@700&display=swap";
+  document.head.appendChild(link);
+}
+
 export function HistoricalParallels() {
   const container = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -67,6 +81,7 @@ export function HistoricalParallels() {
 
   const open = (i: number) => {
     if (expanded !== null || closing.current) return;
+    ensureTelegraphFonts();
     lastTrigger.current = document.activeElement as HTMLElement | null;
     document.body.style.overflow = "hidden";
     setExpanded(i);

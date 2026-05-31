@@ -67,8 +67,12 @@ export const parallels: Parallel[] = [
       note: "Η Ιερά Σύνοδος, στο ίδιο ανακοινωθέν (23.1.2024), ανέφερε ότι τα παιδιά θα είναι τα θύματα ενός αφύσικου μηχανισμού τεκνοθεσιών. Παρόμοια τοποθετήθηκε και ο Μητροπολίτης Πατρών.",
       links: [
         {
+          label: "Ανακοινωθέν Ιεράς Συνόδου",
+          url: "https://www.protothema.gr/greece/article/1458622/iera-sunodos-omofono-ohi-ston-gamo-kai-tin-teknothesia-ton-omofulon-zeugarion/",
+        },
+        {
           label: "Δηλώσεις Μητροπολίτη Πατρών",
-          url: "https://www.stonisi.gr/post/69367/",
+          url: "https://www.orthodoxtimes.gr/mitropolitis-patron-dystychismenes-yparxeis-tha-einai-ta-paidia-mesa-apo-tin-teknothesia-omofylofilon/",
         },
       ],
     },

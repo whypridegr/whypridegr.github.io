@@ -295,13 +295,14 @@
    UNLAYERED so it overrides Tailwind's h1/h2/p preflight resets.
    ========================================================================= */
 .telegraph {
-  --tg-paper: #e9dcc0;
-  --tg-paper-lo: #e0cfa9;
-  --tg-paper-hi: #f1e7d1;
-  --tg-ink: #2a2018;
-  --tg-ink-soft: #4b3d2e;
-  --tg-rule: #34281c;
-  --tg-display: "Playfair Display", serif;
+  /* Archive edition + Blackletter voice (chosen in the design tweaks). */
+  --tg-paper: #dcc69b;
+  --tg-paper-lo: #cdb585;
+  --tg-paper-hi: #e7d4a9;
+  --tg-ink: #392b1a;
+  --tg-ink-soft: #5e4c34;
+  --tg-rule: #43321f;
+  --tg-display: "UnifrakturCook", "Playfair Display", serif;
   position: relative;
   isolation: isolate;
   width: 100%;
@@ -327,7 +328,7 @@
   border-radius: 3px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
   mix-blend-mode: multiply;
-  opacity: 0.1;
+  opacity: 0.17;
   z-index: 6;
 }
 .telegraph::after {
@@ -348,6 +349,27 @@
   z-index: 7;
   border: 2px double var(--tg-rule);
   padding: 14px 16px 10px;
+  filter: sepia(0.1) contrast(0.97);
+}
+
+/* Blackletter reads badly in caps, so the display elements drop uppercase and
+   letter-spacing and use weight 700 (per the design's gothic voice). Greek text
+   has no blackletter glyphs and gracefully falls back to Playfair Display. */
+.telegraph .nameplate h1,
+.telegraph h2.head,
+.telegraph .kicker,
+.telegraph .pullbar,
+.telegraph .ticker .label {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 700;
+}
+.telegraph .nameplate h1 {
+  font-size: clamp(20px, 5.8vw, 48px);
+  transform: scaleX(0.96);
+}
+.telegraph .col-right h2.head {
+  font-size: clamp(20px, 3.6vw, 32px);
 }
 
 .telegraph .top-strap {
