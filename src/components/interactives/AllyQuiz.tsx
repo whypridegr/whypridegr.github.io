@@ -177,8 +177,8 @@ export function AllyQuiz() {
                       which shows whichever option was picked. */}
                   {chosen.cite && (
                     <Popover
-                      label="ⓘ"
-                      ariaLabel="Πηγή"
+                      label="ⓘ απάντηση"
+                      ariaLabel="Πηγή απάντησης"
                       align="start"
                       triggerClassName="ml-2 no-underline text-muted-foreground"
                     >
@@ -187,8 +187,8 @@ export function AllyQuiz() {
                   )}
                   {current?.cite && (
                     <Popover
-                      label="ⓘ"
-                      ariaLabel="Πηγή"
+                      label="ⓘ ερώτηση"
+                      ariaLabel="Πηγή ερώτησης"
                       align="start"
                       triggerClassName="ml-2 no-underline text-muted-foreground"
                     >

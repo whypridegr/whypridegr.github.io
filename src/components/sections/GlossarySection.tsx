@@ -56,6 +56,17 @@ const prideBg = [
   "bg-pride-6",
 ];
 
+// Foreground per colour. The orange (pride-2) and yellow (pride-3) are too
+// light for white text to clear WCAG AA, so those use dark ink instead.
+const prideFg = [
+  "text-white",
+  "text-ink",
+  "text-ink",
+  "text-white",
+  "text-white",
+  "text-white",
+];
+
 export function GlossarySection() {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
@@ -83,9 +94,9 @@ export function GlossarySection() {
               onClick={() =>
                 setActiveIndex(activeIndex === index ? null : index)
               }
-              className={`size-16 md:size-20 rounded-xl text-2xl md:text-3xl font-medium text-white transition-all ${
+              className={`size-16 md:size-20 rounded-xl text-2xl md:text-3xl font-medium transition-all ${
                 prideBg[index % prideBg.length]
-              } ${
+              } ${prideFg[index % prideFg.length]} ${
                 activeIndex === index
                   ? "scale-110 ring-2 ring-ink ring-offset-2 ring-offset-background"
                   : "hover:scale-105"
@@ -112,7 +123,7 @@ export function GlossarySection() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              className={`${prideBg[activeIndex % prideBg.length]} text-white rounded-2xl p-8 md:p-10`}
+              className={`${prideBg[activeIndex % prideBg.length]} ${prideFg[activeIndex % prideFg.length]} rounded-2xl p-8 md:p-10`}
             >
               <div className="text-5xl md:text-6xl mb-4 opacity-90">
                 {terms[activeIndex].letter}

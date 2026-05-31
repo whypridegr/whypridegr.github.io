@@ -7,7 +7,7 @@ export function RightResponse() {
   const [wordIdx, setWordIdx] = useState(0);
   const [showBetter, setShowBetter] = useState(false);
 
-  const words = ["γκέι", ...swapWords];
+  const words = ["gay", ...swapWords];
   const word = words[wordIdx];
   const answered = picked !== null;
   const pickedCalm = answered && options[picked].calm;
@@ -55,7 +55,7 @@ export function RightResponse() {
             {wordIdx !== 0 && (
               <p className="text-sm leading-relaxed text-muted-foreground">
                 Σε «{word}» καμία «φορτωμένη» απάντηση δεν στέκει. Η μόνη φυσική
-                είναι το «Α, ωραία». Ισχύει ακριβώς το ίδιο και για το «γκέι».
+                είναι το «Α, ωραία». Ισχύει ακριβώς το ίδιο και για το «gay».
               </p>
             )}
           </div>

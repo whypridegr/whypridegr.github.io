@@ -79,6 +79,19 @@ export function EqualRights() {
     [dodge],
   );
 
+  // Keyboard users can focus the button and press Enter/Space. Without a
+  // pointer there's nothing to flee from, so make it hop to a fresh spot and
+  // surface the "δεν θέλει να πατηθεί" hint — the joke still lands.
+  const onNoKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+        e.preventDefault();
+        dodge();
+      }
+    },
+    [dodge],
+  );
+
   // Any attempt to actually hit it — bolt and swallow the event.
   const evade = useCallback(
     (e: React.PointerEvent | React.MouseEvent | React.TouchEvent) => {
@@ -126,6 +139,7 @@ export function EqualRights() {
               onPointerDown={evade}
               onMouseEnter={evade}
               onTouchStart={evade}
+              onKeyDown={onNoKeyDown}
               onClick={(e) => e.preventDefault()}
               style={{
                 transform: `translate(${pos.x}px, ${pos.y}px)`,

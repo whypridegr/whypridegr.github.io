@@ -36,10 +36,19 @@
   };
 
   btn?.setAttribute("aria-pressed", String(isDark()));
-  // Manual flip for the current session (not persisted).
-  btn?.addEventListener("click", () => apply(isDark() ? "light" : "dark"));
 
-  // Default and live behaviour follow the device theme.
+  // Once the reader flips it by hand, stop following the device theme for the
+  // rest of the session — otherwise an OS sunset/sunrise would silently undo
+  // their choice. Still not persisted across reloads (by design).
+  let manual = false;
+  btn?.addEventListener("click", () => {
+    manual = true;
+    apply(isDark() ? "light" : "dark");
+  });
+
+  // Until then, default and live behaviour follow the device theme.
   const mq = window.matchMedia("(prefers-color-scheme: dark)");
-  mq.addEventListener("change", (e) => apply(e.matches ? "dark" : "light"));
+  mq.addEventListener("change", (e) => {
+    if (!manual) apply(e.matches ? "dark" : "light");
+  });
 </script>
