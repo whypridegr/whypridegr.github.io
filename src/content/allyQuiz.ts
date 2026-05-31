@@ -298,6 +298,19 @@ export const allyQuizPool: Question[] = [
     id: "day-parenting",
     category: "Καθημερινότητα",
     prompt: "Δύο μπαμπάδες μεγαλώνουν ένα παιδί. Η πρώτη σου σκέψη;",
+    cite: {
+      note: "Επισκοπήσεις ερευνών από επαγγελματικούς φορείς καταλήγουν ότι η ευημερία και η ανάπτυξη των παιδιών δεν σχετίζονται με τον σεξουαλικό προσανατολισμό των γονιών.",
+      links: [
+        {
+          label: "American Academy of Pediatrics (Pediatrics, 2013)",
+          url: "https://publications.aap.org/pediatrics/article/131/4/e1374/31926/Promoting-the-Well-Being-of-Children-Whose-Parents",
+        },
+        {
+          label: "APA: Children of same-sex parents",
+          url: "https://www.apa.org/news/press/releases/2015/07/same-sex-parents",
+        },
+      ],
+    },
     options: [
       {
         id: "love-matters",
@@ -319,19 +332,6 @@ export const allyQuizPool: Question[] = [
         score: -2,
         feedback:
           "Δεκαετίες ερευνών δείχνουν ότι τα παιδιά ομόφυλων γονιών μεγαλώνουν εξίσου καλά.",
-        cite: {
-          note: "Επισκοπήσεις ερευνών από επαγγελματικούς φορείς καταλήγουν ότι η ευημερία και η ανάπτυξη των παιδιών δεν σχετίζονται με τον σεξουαλικό προσανατολισμό των γονιών.",
-          links: [
-            {
-              label: "American Academy of Pediatrics (Pediatrics, 2013)",
-              url: "https://publications.aap.org/pediatrics/article/131/4/e1374/31926/Promoting-the-Well-Being-of-Children-Whose-Parents",
-            },
-            {
-              label: "APA: Children of same-sex parents",
-              url: "https://www.apa.org/news/press/releases/2015/07/same-sex-parents",
-            },
-          ],
-        },
       },
     ],
   },
@@ -467,6 +467,15 @@ export const allyQuizPool: Question[] = [
     category: "Ορολογία",
     prompt:
       "Βλέπετε ρεπορτάζ για μια ίντερσεξ αθλήτρια και κάποιος λέει «ερμαφρόδιτος». Τι κάνεις;",
+    cite: {
+      note: "Ίντερσεξ είναι τα άτομα που γεννιούνται με χαρακτηριστικά φύλου (χρωμοσώματα, γονάδες, ορμόνες, ανατομία) που δεν εντάσσονται στα τυπικά δίπολα αρσενικό/θηλυκό. Πρόκειται για φυσική βιολογική ποικιλομορφία.",
+      links: [
+        {
+          label: "OHCHR: Intersex people",
+          url: "https://www.ohchr.org/en/sexual-orientation-and-gender-identity/intersex-people",
+        },
+      ],
+    },
     options: [
       {
         id: "correct-term",
@@ -474,15 +483,6 @@ export const allyQuizPool: Question[] = [
         score: 2,
         feedback:
           "Είναι μια φυσική βιολογική ποικιλομορφία, όχι κάτι περίεργο. Η λέξη μετράει.",
-        cite: {
-          note: "Ίντερσεξ είναι τα άτομα που γεννιούνται με χαρακτηριστικά φύλου (χρωμοσώματα, γονάδες, ορμόνες, ανατομία) που δεν εντάσσονται στα τυπικά δίπολα αρσενικό/θηλυκό. Πρόκειται για φυσική βιολογική ποικιλομορφία.",
-          links: [
-            {
-              label: "OHCHR: Intersex people",
-              url: "https://www.ohchr.org/en/sexual-orientation-and-gender-identity/intersex-people",
-            },
-          ],
-        },
       },
       {
         id: "words-dont-matter",
@@ -504,6 +504,15 @@ export const allyQuizPool: Question[] = [
     category: "Ορολογία",
     prompt:
       "Κάποιος στην παρέα λέει ότι είναι ασεξουαλικός/ή και δεν νιώθει σεξουαλική έλξη. Τι κάνεις;",
+    cite: {
+      note: "Η ασεξουαλικότητα ορίζεται ως η απουσία σεξουαλικής έλξης προς άλλους και αναγνωρίζεται ως σεξουαλικός προσανατολισμός.",
+      links: [
+        {
+          label: "APA Dictionary: Asexuality",
+          url: "https://dictionary.apa.org/asexuality",
+        },
+      ],
+    },
     options: [
       {
         id: "listen",
@@ -511,15 +520,6 @@ export const allyQuizPool: Question[] = [
         score: 2,
         feedback:
           "Η ασεξουαλικότητα είναι υπαρκτός προσανατολισμός, όχι κάτι που λείπει.",
-        cite: {
-          note: "Η ασεξουαλικότητα ορίζεται ως η απουσία σεξουαλικής έλξης προς άλλους και αναγνωρίζεται ως σεξουαλικός προσανατολισμός.",
-          links: [
-            {
-              label: "APA Dictionary: Asexuality",
-              url: "https://dictionary.apa.org/asexuality",
-            },
-          ],
-        },
       },
       {
         id: "right-person",
@@ -594,21 +594,21 @@ export const allyQuizPool: Question[] = [
     category: "Προνόμιο",
     prompt:
       "Ένα ομόφυλο ζευγάρι φίλων δυσκολεύεται να νοικιάσει σπίτι, γιατί οι ιδιοκτήτες διστάζουν μόλις καταλάβουν. Τι κάνεις;",
+    cite: {
+      note: "Έρευνα του Οργανισμού Θεμελιωδών Δικαιωμάτων της ΕΕ (FRA) καταγράφει σημαντικά ποσοστά διακρίσεων σε βάρος ΛΟΑΤΚΙ+ ατόμων σε διάφορους τομείς της ζωής, μεταξύ άλλων στη στέγαση.",
+      links: [
+        {
+          label: "FRA: EU LGBTI II Survey (2020)",
+          url: "https://fra.europa.eu/en/publication/2020/eu-lgbti-survey-results",
+        },
+      ],
+    },
     options: [
       {
         id: "help-out",
         text: "Αναγνωρίζω τη δυσκολία και κοιτάζω αν ξέρω κάποιον που νοικιάζει.",
         score: 2,
         feedback: "Είναι υπαρκτό, δομικό εμπόδιο, όχι γκρίνια.",
-        cite: {
-          note: "Έρευνα του Οργανισμού Θεμελιωδών Δικαιωμάτων της ΕΕ (FRA) καταγράφει σημαντικά ποσοστά διακρίσεων σε βάρος ΛΟΑΤΚΙ+ ατόμων σε διάφορους τομείς της ζωής, μεταξύ άλλων στη στέγαση.",
-          links: [
-            {
-              label: "FRA: EU LGBTI II Survey (2020)",
-              url: "https://fra.europa.eu/en/publication/2020/eu-lgbti-survey-results",
-            },
-          ],
-        },
       },
       {
         id: "say-roommates",
