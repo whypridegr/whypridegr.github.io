@@ -1,0 +1,70 @@
+---
+// Lightweight cookie-consent banner. PostHog boots opted-out; nothing is
+// captured until the visitor taps "Εντάξει". The choice is remembered, so the
+// banner shows only once. Hidden by default; the script reveals it when needed.
+---
+
+<div
+  id="consent-banner"
+  hidden
+  role="region"
+  aria-label="Συγκατάθεση για στατιστικά"
+  class="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-paper/95 backdrop-blur"
+>
+  <div
+    class="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-4 sm:flex-row sm:items-center sm:justify-between"
+  >
+    <p class="text-sm text-muted-foreground reading-width">
+      Κρατάμε ανώνυμα στατιστικά για να βελτιώνουμε τη σελίδα. Πατώντας «Εντάξει»
+      τα αποδέχεσαι.
+    </p>
+    <div class="flex shrink-0 items-center gap-3">
+      <button
+        id="consent-decline"
+        type="button"
+        class="text-sm text-muted-foreground underline decoration-border underline-offset-4 hover:text-ink"
+      >
+        Όχι, ευχαριστώ
+      </button>
+      <button
+        id="consent-accept"
+        type="button"
+        class="rounded-md bg-ink px-5 py-2 text-sm uppercase tracking-[0.15em] text-paper transition-colors hover:bg-accent"
+      >
+        Εντάξει
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  import {
+    analyticsActive,
+    consentDecided,
+    grantConsent,
+    denyConsent,
+  } from "../../lib/analytics";
+
+  const banner = document.getElementById("consent-banner");
+  if (banner) {
+    // No analytics (no key) or already decided → never show it.
+    if (!analyticsActive() || consentDecided()) {
+      banner.remove();
+    } else {
+      banner.hidden = false;
+      const close = () => banner.remove();
+      document
+        .getElementById("consent-accept")
+        ?.addEventListener("click", () => {
+          grantConsent();
+          close();
+        });
+      document
+        .getElementById("consent-decline")
+        ?.addEventListener("click", () => {
+          denyConsent();
+          close();
+        });
+    }
+  }
+</script>

@@ -24,6 +24,12 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bun run build
+        env:
+          # Public PostHog project key (phc_…) — ships in the browser bundle by
+          # design, so it's safe to keep here. The .env is gitignored, so CI
+          # needs it explicitly or analytics no-ops in production.
+          PUBLIC_POSTHOG_KEY: phc_wV9p6p5hWiPceda3phYdBoRVhZms8diiLmNMtnkzdyN4
+          PUBLIC_POSTHOG_HOST: https://eu.i.posthog.com
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist

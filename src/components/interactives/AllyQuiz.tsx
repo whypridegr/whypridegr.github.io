@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { capture } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 import {
   pickQuestions,
@@ -32,16 +33,37 @@ export function AllyQuiz() {
   const chosen = current?.options.find((o) => o.id === chosenId);
   const isLast = index === questions.length - 1;
 
+  // Fire once per mount, when the quiz first appears.
+  useEffect(() => {
+    capture("quiz_started", { questions: questions.length });
+  }, [questions.length]);
+
   // You can change your mind on the current question: re-clicking overwrites the
   // answer (last pick wins) and refreshes the feedback. No going back, though.
   function answer(option: Option) {
     if (!current) return;
+    // Only count it the first time this option is picked — re-clicking the
+    // same answer shouldn't double-fire the event.
+    if (chosenId !== option.id) {
+      capture("quiz_answered", {
+        question: current.id,
+        option: option.id,
+        step: index + 1,
+      });
+    }
     setAnswers((a) => ({ ...a, [current.id]: option.id }));
   }
 
   function next() {
-    if (isLast) setPhase("result");
-    else setIndex((i) => i + 1);
+    if (isLast) {
+      const score = scoreAnswers(questions, answers);
+      capture("quiz_completed", {
+        score,
+        total: questions.length,
+        tier: resultTier(score).label,
+      });
+      setPhase("result");
+    } else setIndex((i) => i + 1);
   }
 
   function restart() {

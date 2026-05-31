@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import Header from "../components/site/Header.astro";
 import Footer from "../components/site/Footer.astro";
+import ConsentBanner from "../components/site/ConsentBanner.astro";
 
 interface Props {
   title: string;
@@ -54,6 +55,10 @@ const ogImage =
         } catch (e) {}
       })();
     </script>
+
+    {/* Analytics: boots PostHog + section/interaction/outbound trackers.
+        Processed by Astro (bundled, deduped) so the npm import resolves. */}
+    <script src="../lib/analytics-init.ts"></script>
   </head>
   <body>
     <Header />
@@ -61,5 +66,6 @@ const ogImage =
       <slot />
     </main>
     <Footer />
+    <ConsentBanner />
   </body>
 </html>
