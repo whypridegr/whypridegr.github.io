@@ -20,8 +20,10 @@ function ensureTelegraphFonts() {
   fontsRequested = true;
   const link = document.createElement("link");
   link.rel = "stylesheet";
+  // UnifrakturCook (blackletter) is self-hosted via @font-face; the rest come
+  // from Google Fonts.
   link.href =
-    "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,800;0,900;1,700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Courier+Prime:wght@400;700&family=UnifrakturCook:wght@700&display=swap";
+    "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,800;0,900;1,700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Courier+Prime:wght@400;700&display=swap";
   document.head.appendChild(link);
 }
 

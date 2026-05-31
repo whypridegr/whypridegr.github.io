@@ -288,6 +288,16 @@
   }
 }
 
+/* Self-hosted blackletter for the masthead, so it always renders (no reliance
+   on the third-party font CDN). Latin-only; Greek falls back to Playfair. */
+@font-face {
+  font-family: "UnifrakturCook";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/unifrakturcook-700.woff2") format("woff2");
+}
+
 /* =========================================================================
    Telegraph Daily News — 1922 newspaper sheet (expanded historical parallel).
    Ported from a standalone design, namespaced under .telegraph with --tg-*
