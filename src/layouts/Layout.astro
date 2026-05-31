@@ -9,6 +9,8 @@ interface Props {
   description: string;
   ogTitle?: string;
   ogDescription?: string;
+  /** One or more schema.org objects, emitted as JSON-LD in <head>. */
+  structuredData?: Record<string, unknown> | Record<string, unknown>[];
 }
 
 const {
@@ -16,7 +18,18 @@ const {
   description,
   ogTitle = title,
   ogDescription = description,
+  structuredData,
 } = Astro.props;
+
+const jsonLdBlocks = structuredData
+  ? Array.isArray(structuredData)
+    ? structuredData
+    : [structuredData]
+  : [];
+
+// Escape "<" so a stray "</script>" inside content can't break out of the tag.
+const toJsonLd = (block: Record<string, unknown>) =>
+  JSON.stringify(block).replace(/</g, "\\u003c");
 
 const ogImage =
   "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/39ffc52f-1eac-44b5-a11f-a5eb989f6e67/id-preview-6fdca055--8639a017-f487-447b-9f11-33ee27460728.lovable.app-1779995919950.png";
@@ -42,6 +55,12 @@ const ogImage =
     <meta name="twitter:title" content={ogTitle} />
     <meta name="twitter:description" content={ogDescription} />
     <meta name="twitter:image" content={ogImage} />
+
+    {
+      jsonLdBlocks.map((block) => (
+        <script type="application/ld+json" set:html={toJsonLd(block)} />
+      ))
+    }
 
     {/* No-flash theme: light by default, dark only if the device asks for it.
         Device-driven (no stored override), runs before paint. */}
