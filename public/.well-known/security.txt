@@ -1,0 +1,5 @@
+# Πώς να αναφέρεις ένα ζήτημα ασφάλειας για το whypride.gr
+Contact: https://github.com/angelospk/whypride/security/advisories/new
+Expires: 2027-06-01T00:00:00.000Z
+Preferred-Languages: el, en
+Canonical: https://whypride.gr/.well-known/security.txt

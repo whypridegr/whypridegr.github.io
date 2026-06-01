@@ -1,0 +1,5 @@
+# whypride.gr: εκπαιδευτικό περιεχόμενο, ελεύθερα προσβάσιμο.
+User-agent: *
+Allow: /
+
+Sitemap: https://whypride.gr/sitemap-index.xml

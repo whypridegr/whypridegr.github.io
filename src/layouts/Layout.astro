@@ -31,8 +31,19 @@ const jsonLdBlocks = structuredData
 const toJsonLd = (block: Record<string, unknown>) =>
   JSON.stringify(block).replace(/</g, "\\u003c");
 
-const ogImage =
-  "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/39ffc52f-1eac-44b5-a11f-a5eb989f6e67/id-preview-6fdca055--8639a017-f487-447b-9f11-33ee27460728.lovable.app-1779995919950.png";
+// Self-hosted social share image (1200×630-class, lives in /public). Same
+// artwork we shipped before, now served from our own origin so the preview
+// never breaks if the upstream bucket disappears.
+const ogImage = new URL("/og-image.png", Astro.site).href;
+const ogImageAlt = "WhyPride.gr: Γιατί υπάρχει Pride;";
+
+// Canonical + og:url. Build output is `directory` format (/about/ URLs), so
+// normalise to a trailing slash to match the sitemap and avoid duplicate
+// canonicals for /foo vs /foo/.
+const pathname = Astro.url.pathname.endsWith("/")
+  ? Astro.url.pathname
+  : `${Astro.url.pathname}/`;
+const canonicalURL = new URL(pathname, Astro.site).href;
 ---
 
 <!doctype html>
@@ -43,18 +54,29 @@ const ogImage =
     <meta name="description" content={description} />
     <meta name="google-site-verification" content="oAZHLT3YLDGdADrlwe4seOt2wrBU-j_LJObjUhCK0wQ" />
     <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="mask-icon" href="/favicon.svg" color="#3b6fd6" />
     <title>{title}</title>
 
     <meta property="og:title" content={ogTitle} />
     <meta property="og:description" content={ogDescription} />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={ogImage} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image:width" content="1920" />
+    <meta property="og:image:height" content="1080" />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={ogTitle} />
     <meta name="twitter:description" content={ogDescription} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
 
     {
       jsonLdBlocks.map((block) => (
@@ -80,8 +102,9 @@ const ogImage =
     <script src="../lib/analytics-init.ts"></script>
   </head>
   <body>
+    <a href="#main" class="skip-link">Μετάβαση στο περιεχόμενο</a>
     <Header />
-    <main>
+    <main id="main">
       <slot />
     </main>
     <Footer />
