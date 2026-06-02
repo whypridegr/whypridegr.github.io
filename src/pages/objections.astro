@@ -1,0 +1,32 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { ObjectionsContent } from "../components/content/ObjectionsContent";
+import { objections } from "../content/faq";
+
+// Drop the [label](#anchor) markdown so the schema answer reads as plain prose.
+const stripLinks = (s: string) =>
+  s.replace(/\[([^\]\n]+)\]\((#[A-Za-z0-9_-]+)\)/g, "$1");
+
+// FAQ rich-result schema, built from the same content the page renders.
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: objections.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: stripLinks(`${item.short} ${item.long}`),
+    },
+  })),
+};
+---
+
+<Layout
+  title="Είναι αμαρτία η ομοφυλοφιλία; Επιλογή; Αρρώστια; | WhyPride.gr"
+  description="Είναι αμαρτία η ομοφυλοφιλία; Είναι επιλογή ή αρρώστια; Ψύχραιμες, τεκμηριωμένες απαντήσεις με πηγές στις πιο συχνές αντιρρήσεις για το Pride."
+  ogDescription="Οι πιο σκληρές αντιρρήσεις, με ψύχραιμες απαντήσεις και πηγές."
+  structuredData={faqSchema}
+>
+  <ObjectionsContent client:idle />
+</Layout>

@@ -152,6 +152,12 @@ export function TelegraphSheet({ parallel }: { parallel: Parallel }) {
             >
               {parallel.quote}
             </p>
+            {/* Evidence sits with its era: the historical source under "Τότε". */}
+            {parallel.source && (
+              <div className="footnotes" style={{ gridTemplateColumns: "1fr" }}>
+                <CiteFootnote label="Ιστορικά" cite={parallel.source} />
+              </div>
+            )}
 
             <hr className="rule thin" />
 
@@ -170,15 +176,10 @@ export function TelegraphSheet({ parallel }: { parallel: Parallel }) {
             >
               {parallel.modern}
             </p>
-
-            {(parallel.source || parallel.greek) && (
-              <div className="footnotes">
-                {parallel.source && (
-                  <CiteFootnote label="Ιστορικά" cite={parallel.source} />
-                )}
-                {parallel.greek && (
-                  <CiteFootnote label="Ελλάδα, σήμερα" cite={parallel.greek} />
-                )}
+            {/* …and the Greek contemporary echo under "Σήμερα". */}
+            {parallel.greek && (
+              <div className="footnotes" style={{ gridTemplateColumns: "1fr" }}>
+                <CiteFootnote label="Ελλάδα, σήμερα" cite={parallel.greek} />
               </div>
             )}
           </section>

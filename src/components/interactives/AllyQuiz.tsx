@@ -187,7 +187,7 @@ export function AllyQuiz() {
                   )}
                   {current?.cite && (
                     <Popover
-                      label="ⓘ ερώτηση"
+                      label="ⓘ πηγή:"
                       ariaLabel="Πηγή ερώτησης"
                       align="start"
                       triggerClassName="ml-2 no-underline text-muted-foreground"

@@ -45,6 +45,39 @@ function drawRing(
   });
 }
 
+// Curved "WhyPride.gr" wordmark, laid along the bottom of the ring (reads
+// left-to-right, upright at 6 o'clock). White, with a soft shadow so it stays
+// legible over any ring colour.
+function drawCurvedWordmark(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  radius: number,
+) {
+  ctx.save();
+  ctx.font = "700 34px Helvetica, Arial, sans-serif";
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.shadowColor = "rgba(0,0,0,0.35)";
+  ctx.shadowBlur = 6;
+
+  const chars = [...text];
+  const widths = chars.map((c) => ctx.measureText(c).width);
+  const totalAngle = widths.reduce((a, w) => a + w, 0) / radius;
+  // Bottom centre is +PI/2; start at the left end and walk clockwise to the right.
+  let angle = Math.PI / 2 + totalAngle / 2;
+  chars.forEach((c, i) => {
+    const a = angle - widths[i] / 2 / radius;
+    ctx.save();
+    ctx.translate(CX + radius * Math.cos(a), CY + radius * Math.sin(a));
+    ctx.rotate(a - Math.PI / 2);
+    ctx.fillText(c, 0, 0);
+    ctx.restore();
+    angle -= widths[i] / radius;
+  });
+  ctx.restore();
+}
+
 function drawSilhouette(ctx: CanvasRenderingContext2D) {
   ctx.fillStyle = "#d9d3c6";
   ctx.beginPath();
@@ -90,21 +123,19 @@ function render(
 
   // pride ring(s)
   const ringWidth = 44;
+  let wordmarkRadius = RADIUS + ringWidth / 2;
   if (style === "spectrum") {
     drawRing(ctx, RADIUS + ringWidth / 2, ringWidth, SPECTRUM);
   } else if (style === "trans") {
     drawRing(ctx, RADIUS + ringWidth / 2, ringWidth, TRANS);
   } else {
+    wordmarkRadius = RADIUS + ringWidth / 2 + 22;
     drawRing(ctx, RADIUS + ringWidth / 2 + 22, ringWidth, SPECTRUM);
     drawRing(ctx, RADIUS + ringWidth / 2 - 18, 28, PROGRESS_INNER);
   }
 
-  // caption — just the site mark (no "Ally" line above it)
-  ctx.textAlign = "center";
-  ctx.textBaseline = "alphabetic";
-  ctx.font = "400 38px Helvetica, Arial, sans-serif";
-  ctx.fillStyle = "#6b6358";
-  ctx.fillText("WhyPride.gr", CX, 940);
+  // Site wordmark, curved into the bottom of the ring.
+  drawCurvedWordmark(ctx, "WhyPride.gr", wordmarkRadius);
 }
 
 export function AllyBadge({ onRestart }: { onRestart: () => void }) {

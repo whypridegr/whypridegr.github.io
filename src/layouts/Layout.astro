@@ -97,6 +97,24 @@ const canonicalURL = new URL(pathname, Astro.site).href;
       })();
     </script>
 
+    {/* Random light page tint, picked once per session so it stays put while
+        you browse (this is an MPA — every internal link is a fresh load) and
+        only rerolls on a new visit. "" = the mint default. Runs before paint. */}
+    <script is:inline>
+      (function () {
+        try {
+          var tints = ["", "tint-lavender", "tint-sky"];
+          var key = "wp-tint";
+          var t = sessionStorage.getItem(key);
+          if (t === null) {
+            t = tints[Math.floor(Math.random() * tints.length)];
+            sessionStorage.setItem(key, t);
+          }
+          if (t) document.documentElement.classList.add(t);
+        } catch (e) {}
+      })();
+    </script>
+
     {/* Analytics: boots PostHog + section/interaction/outbound trackers.
         Processed by Astro (bundled, deduped) so the npm import resolves. */}
     <script src="../lib/analytics-init.ts"></script>
