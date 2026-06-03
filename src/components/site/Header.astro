@@ -47,22 +47,22 @@ const links = [
       glossary), the way empathy-prompts keeps its context one tap away. */}
   <div
     id="wp-info-wrap"
-    class="pointer-events-auto fixed right-14 top-4 z-50 transition-all duration-300"
+    class="pointer-events-auto fixed right-12 top-4 z-50 transition-all duration-300"
   >
     <button
       id="wp-info-btn"
       type="button"
       aria-expanded="false"
       aria-controls="wp-info-menu"
-      aria-label="Τι είναι αυτό; Υπόβαθρο και γλωσσάρι"
-      class="inline-flex items-center justify-center rounded-full p-2 text-muted-foreground transition-colors hover:text-accent"
+      aria-label="Υπόβαθρο: ιστορική αναδρομή και γλωσσάρι"
+      class="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-ink"
     >
       <svg
         viewBox="0 0 24 24"
-        class="size-6"
+        class="size-5"
         fill="none"
         stroke="currentColor"
-        stroke-width="1.8"
+        stroke-width="1.7"
         stroke-linecap="round"
         stroke-linejoin="round"
         aria-hidden="true"
@@ -76,15 +76,8 @@ const links = [
       id="wp-info-menu"
       aria-label="Υπόβαθρο"
       hidden
-      class="absolute right-0 top-12 w-60 rounded-xl border border-border bg-card p-2 shadow-xl"
+      class="absolute right-0 top-12 w-56 rounded-xl border border-border bg-card p-2 shadow-xl"
     >
-      <p class="px-3 pt-1 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-        Τι είναι αυτό;
-      </p>
-      <p class="px-3 pb-2 pt-1 text-sm text-muted-foreground">
-        Λίγο υπόβαθρο, αν το θες.
-      </p>
-      <div class="pride-rule-fade mb-2 h-px w-full"></div>
       <a
         href="/#istoria"
         class="block rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-secondary hover:text-accent"
