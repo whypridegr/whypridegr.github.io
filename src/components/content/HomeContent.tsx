@@ -2,23 +2,11 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Link } from "@/components/site/Link";
 import { Accordion } from "@/components/primitives/Accordion";
-import { FlipCard } from "@/components/primitives/FlipCard";
-import { Popover } from "@/components/primitives/Popover";
-import { CiteList } from "@/components/primitives/CiteList";
 import { Reveal } from "@/components/primitives/Reveal";
-import { GuessGreece } from "@/components/interactives/GuessGreece";
-import { ReframeToggle } from "@/components/interactives/ReframeToggle";
-import { PrivilegeVisualizer } from "@/components/interactives/PrivilegeVisualizer";
-import { ReflectiveComment } from "@/components/interactives/ReflectiveComment";
-import { HistoricalParallels } from "@/components/interactives/HistoricalParallels";
-import { RightResponse } from "@/components/interactives/RightResponse";
-import { SegregationSandbox } from "@/components/interactives/SegregationSandbox";
+import { ChallengeHub } from "@/components/sections/ChallengeHub";
 import { GlossarySection } from "@/components/sections/GlossarySection";
 import { Timeline } from "@/components/sections/Timeline";
 import { faq } from "@/content/faq";
-import { myths } from "@/content/myths";
-import { scenarios } from "@/content/scenarios";
-import { doubleStandards } from "@/content/doubleStandards";
 import { sources } from "@/content/sources";
 
 export function HomeContent() {
@@ -35,70 +23,15 @@ export function HomeContent() {
         <Accordion items={faq} initialVisible={4} />
       </Section>
 
-      <Section id="mythoi" title="Γύρισέ τες. Δες την άλλη πλευρά.">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {myths.map((m, i) => (
-            <div key={i} className="flex flex-col gap-2">
-              <FlipCard item={m} />
-              {/* Reserve the citation row on every card so equal-height
-                  cards stay aligned even if a myth has no cite. */}
-              <div className="min-h-5 text-xs">
-                {m.cite && (
-                  <Popover
-                    label="ⓘ πηγές"
-                    ariaLabel="Πηγές και τεκμηρίωση"
-                    align="start"
-                    triggerClassName="no-underline text-muted-foreground hover:text-accent"
-                  >
-                    <CiteList cite={m.cite} />
-                  </Popover>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      <Section id="pronomio" title="Διάλεξε όσα σε αντιπροσωπεύουν.">
-        <PrivilegeVisualizer />
-      </Section>
-
+      {/* — All interactive challenges, gathered into one section (like the
+          quiz). A launcher grid up top; one challenge opens inline at a time,
+          so the page no longer scrolls endlessly through every interactive. — */}
       <Section
-        id="diplo-metro"
-        title="Πάτα τον διακόπτη και διάβασέ το δύο φορές."
+        id="provokliseis"
+        eyebrow="Προκλήσεις"
+        title="Διάλεξε μια πρόκληση και δοκίμασέ τη."
       >
-        <ReframeToggle items={doubleStandards} />
-      </Section>
-
-      {/* Segregation sandbox — interactive only, no framing */}
-      <Section
-        id="prokatalipsi"
-        title="Πώς λειτουργεί η προκατάληψη με ένα πείραμα."
-      >
-        <SegregationSandbox />
-      </Section>
-
-      <Section id="elsada" title="Μάντεψε πού συνέβη.">
-        <GuessGreece items={scenarios} />
-      </Section>
-
-      <Section
-        id="apantisi"
-        title="Υποθετικό σενάριο. Μπορεί να σου έχει τύχει."
-      >
-        <RightResponse />
-      </Section>
-
-      <Section
-        id="palia"
-        title="Το ίδιο επιχείρημα. Διαφορετικός στόχος χρονικά."
-      >
-        <HistoricalParallels />
-      </Section>
-
-      {/* — Discussion, before the close — */}
-      <Section id="sxolio" title="Γράψε ένα σχόλιο. Ή σκέψου το λίγο ακόμα.">
-        <ReflectiveComment />
+        <ChallengeHub />
       </Section>
 
       {/* — Warm beat + nudge toward the reference material below — */}
