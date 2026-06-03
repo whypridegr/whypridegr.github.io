@@ -47,6 +47,12 @@ export function HomeContent() {
             </p>
             <div className="mt-12 flex flex-col items-center gap-8">
               <a
+                href="/quiz"
+                className="rounded-md bg-ink px-6 py-3 text-sm uppercase tracking-[0.2em] text-paper transition-colors hover:bg-accent"
+              >
+                Ώρα να δούμε πόσο ally είσαι
+              </a>
+              <a
                 href="#glossari"
                 className="inline-flex flex-col items-center gap-1 text-sm uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-ink"
               >
@@ -54,12 +60,6 @@ export function HomeContent() {
                 <span aria-hidden className="text-xl leading-none">
                   ↓
                 </span>
-              </a>
-              <a
-                href="/quiz"
-                className="rounded-md bg-ink px-6 py-3 text-sm uppercase tracking-[0.2em] text-paper transition-colors hover:bg-accent"
-              >
-                Ώρα να δούμε πόσο ally είσαι
               </a>
             </div>
           </Reveal>

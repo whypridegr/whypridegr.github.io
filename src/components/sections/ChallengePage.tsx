@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ShareEmbed } from "@/components/primitives/ShareEmbed";
-import { challenges, challengeIds } from "@/components/sections/challengeRegistry";
+import {
+  challenges,
+  challengeIds,
+} from "@/components/sections/challengeRegistry";
 import { getDone, markDone, pickNext } from "@/lib/challengeProgress";
 
 const TOTAL = challengeIds.length;
@@ -37,7 +40,8 @@ export function ChallengePage({ id }: { id: string }) {
       events.forEach((ev) => node.removeEventListener(ev, onInteract));
     };
     events.forEach((ev) => node.addEventListener(ev, onInteract));
-    return () => events.forEach((ev) => node.removeEventListener(ev, onInteract));
+    return () =>
+      events.forEach((ev) => node.removeEventListener(ev, onInteract));
   }, [id, engaged]);
 
   if (!challenge) return null;
@@ -98,7 +102,7 @@ export function ChallengePage({ id }: { id: string }) {
                   : "border border-ink hover:bg-ink hover:text-paper",
               )}
             >
-              {allDone ? "Δες την κατακλείδα" : "Φτάνει για τώρα"}
+              {allDone ? "Τέλος" : "Φτάνει για τώρα"}
             </button>
           </div>
         </div>
