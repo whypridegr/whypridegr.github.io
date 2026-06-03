@@ -2,9 +2,10 @@ import { useState, useId, useRef, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import type { FaqItem } from "@/content/faq";
 
-// Turn [label](#anchor) markers in plain content strings into in-page anchors.
-// Only hash anchors are allowed; anything malformed stays plain text.
-const LINK_RE = /\[([^\]\n]+)\]\((#[A-Za-z0-9_-]+)\)/g;
+// Turn [label](target) markers in plain content strings into links. Targets
+// are limited to in-page hash anchors (#foo) or local paths (/foo); anything
+// else stays plain text.
+const LINK_RE = /\[([^\]\n]+)\]\((#[A-Za-z0-9_-]+|\/[A-Za-z0-9_\-/]*)\)/g;
 
 function renderRich(text: string, keyPrefix: string): ReactNode[] {
   const nodes: ReactNode[] = [];

@@ -1,0 +1,20 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { ChallengePage } from "../../components/sections/ChallengePage";
+import { challenges } from "../../components/sections/challengeRegistry";
+
+// One page per challenge — own URL, real back-button history.
+export function getStaticPaths() {
+  return challenges.map((c) => ({
+    params: { id: c.id },
+    props: { title: c.title, blurb: c.blurb },
+  }));
+}
+
+const { id } = Astro.params;
+const { title, blurb } = Astro.props;
+---
+
+<Layout title={`${title} | WhyPride.gr`} description={blurb}>
+  <ChallengePage id={id} client:load />
+</Layout>

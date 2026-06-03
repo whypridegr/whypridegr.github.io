@@ -2,25 +2,23 @@ import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * Share + embed controls for a single challenge.
+ * Compact share + embed icons for a single challenge.
  *
- * "Μοιράσου" hands the deep link (origin/#id) to the native share sheet when
- * available, otherwise copies it. "Ενσωμάτωσε" reveals — and copies — an
- * <iframe> snippet pointing at the standalone /embed/[id] widget, so the
- * challenge can drop straight into an article.
+ * Share hands the deep link (origin/challenge/id) to the native share sheet
+ * when available, otherwise copies it. Embed reveals — and copies — an
+ * <iframe> snippet pointing at the chrome-less /embed/[id] widget.
  */
 export function ShareEmbed({ id, title }: { id: string; title: string }) {
   const [copied, setCopied] = useState<"link" | "embed" | null>(null);
   const [showEmbed, setShowEmbed] = useState(false);
-  // The control unmounts on "back" / switching challenges; clear the pending
-  // reset so it never fires setState on an unmounted component.
+  // The control can unmount on navigation; clear the pending reset so it never
+  // fires setState on an unmounted component.
   const flashTimer = useRef<number | undefined>(undefined);
   useEffect(() => () => window.clearTimeout(flashTimer.current), []);
 
-  // Resolved at click time: SSR has no window, and we want the live origin.
   const origin = () =>
     typeof window === "undefined" ? "https://whypride.gr" : window.location.origin;
-  const shareUrl = () => `${origin()}/#${id}`;
+  const shareUrl = () => `${origin()}/challenge/${id}`;
   const embedCode = () =>
     `<iframe src="${origin()}/embed/${id}" width="100%" height="640" style="border:1px solid #e5e7eb;border-radius:12px" loading="lazy" title="${title} · whypride.gr"></iframe>`;
 
@@ -56,31 +54,71 @@ export function ShareEmbed({ id, title }: { id: string; title: string }) {
   };
 
   const onEmbed = async () => {
-    setShowEmbed(true);
-    if (await copy(embedCode())) flash("embed");
+    const opening = !showEmbed;
+    setShowEmbed(opening);
+    // Only copy when revealing the snippet, not when collapsing it.
+    if (opening && (await copy(embedCode()))) flash("embed");
   };
 
-  const btn =
-    "inline-flex items-center gap-2 rounded-md border border-border px-4 py-2 text-xs uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:border-accent hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
+  const iconBtn =
+    "relative inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
 
   return (
-    <div className="mt-10 border-t border-border pt-6">
-      <div className="flex flex-wrap items-center gap-3">
-        <button type="button" onClick={onShare} className={btn}>
-          {copied === "link" ? "Αντιγράφηκε ✓" : "Μοιράσου"}
+    <div>
+      <div className="flex items-center gap-1">
+        <button
+          type="button"
+          onClick={onShare}
+          className={iconBtn}
+          aria-label="Μοιράσου αυτή την πρόκληση"
+          title={copied === "link" ? "Αντιγράφηκε ✓" : "Μοιράσου"}
+        >
+          <svg
+            viewBox="0 0 24 24"
+            className="size-5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.7}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden
+          >
+            <circle cx="18" cy="5" r="3" />
+            <circle cx="6" cy="12" r="3" />
+            <circle cx="18" cy="19" r="3" />
+            <path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4" />
+          </svg>
         </button>
         <button
           type="button"
           onClick={onEmbed}
           aria-expanded={showEmbed}
-          className={btn}
+          className={iconBtn}
+          aria-label="Κώδικας ενσωμάτωσης"
+          title={copied === "embed" ? "Αντιγράφηκε ✓" : "Ενσωμάτωσε"}
         >
-          {copied === "embed" ? "Αντιγράφηκε ✓" : "Ενσωμάτωσε"}
+          <svg
+            viewBox="0 0 24 24"
+            className="size-5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.7}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden
+          >
+            <path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13.5 6l-3 12" />
+          </svg>
         </button>
+        {copied && (
+          <span className="text-xs text-muted-foreground" role="status">
+            Αντιγράφηκε ✓
+          </span>
+        )}
       </div>
 
       {showEmbed && (
-        <label className="mt-4 block">
+        <label className="mt-3 block">
           <span className="text-xs text-muted-foreground">
             Κώδικας ενσωμάτωσης (επικολλάται σε άρθρο ή ιστοσελίδα):
           </span>

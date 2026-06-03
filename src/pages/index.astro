@@ -5,7 +5,7 @@ import { faq } from "../content/faq";
 
 // Drop the [label](#anchor) markdown so the schema answer reads as plain prose.
 const stripLinks = (s: string) =>
-  s.replace(/\[([^\]\n]+)\]\((#[A-Za-z0-9_-]+)\)/g, "$1");
+  s.replace(/\[([^\]\n]+)\]\((#[A-Za-z0-9_-]+|\/[A-Za-z0-9_\-/]*)\)/g, "$1");
 
 // FAQ rich-result schema, built from the same content the page renders.
 const faqSchema = {

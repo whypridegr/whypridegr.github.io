@@ -26,11 +26,7 @@ export function HomeContent() {
       {/* — All interactive challenges, gathered into one section (like the
           quiz). A launcher grid up top; one challenge opens inline at a time,
           so the page no longer scrolls endlessly through every interactive. — */}
-      <Section
-        id="provokliseis"
-        eyebrow="Προκλήσεις"
-        title="Διάλεξε μια πρόκληση και δοκίμασέ τη."
-      >
+      <Section id="prokliseis">
         <ChallengeHub />
       </Section>
 
