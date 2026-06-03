@@ -213,12 +213,6 @@ function Hero() {
             Πάμε
           </a>
           <a
-            href="#glossari"
-            className="px-6 py-3 text-sm uppercase tracking-[0.2em] border border-ink rounded-md hover:bg-ink hover:text-paper transition-colors"
-          >
-            Διάβασε περισσότερα
-          </a>
-          <a
             href="/quiz"
             className="px-6 py-3 text-sm uppercase tracking-[0.2em] border border-ink rounded-md hover:bg-ink hover:text-paper transition-colors"
           >
