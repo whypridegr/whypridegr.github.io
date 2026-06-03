@@ -43,6 +43,63 @@ const links = [
     }
   </nav>
 
+  {/* "What is this?" — a quiet entry to the background material (history +
+      glossary), the way empathy-prompts keeps its context one tap away. */}
+  <div
+    id="wp-info-wrap"
+    class="pointer-events-auto fixed right-14 top-4 z-50 transition-all duration-300"
+  >
+    <button
+      id="wp-info-btn"
+      type="button"
+      aria-expanded="false"
+      aria-controls="wp-info-menu"
+      aria-label="Τι είναι αυτό; Υπόβαθρο και γλωσσάρι"
+      class="inline-flex items-center justify-center rounded-full p-2 text-muted-foreground transition-colors hover:text-accent"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        class="size-6"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M12 16v-4M12 8h.01"></path>
+      </svg>
+    </button>
+
+    <nav
+      id="wp-info-menu"
+      aria-label="Υπόβαθρο"
+      hidden
+      class="absolute right-0 top-12 w-60 rounded-xl border border-border bg-card p-2 shadow-xl"
+    >
+      <p class="px-3 pt-1 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+        Τι είναι αυτό;
+      </p>
+      <p class="px-3 pb-2 pt-1 text-sm text-muted-foreground">
+        Λίγο υπόβαθρο, αν το θες.
+      </p>
+      <div class="pride-rule-fade mb-2 h-px w-full"></div>
+      <a
+        href="/#istoria"
+        class="block rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-secondary hover:text-accent"
+      >
+        Ιστορική αναδρομή
+      </a>
+      <a
+        href="/glossary"
+        class="block rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-secondary hover:text-accent"
+      >
+        Γλωσσάρι
+      </a>
+    </nav>
+  </div>
+
   <div
     id="wp-theme-wrap"
     class="pointer-events-auto fixed right-3 top-4 z-50 transition-all duration-300"
@@ -59,7 +116,8 @@ const links = [
     transform: translateY(-12px);
     pointer-events: none;
   }
-  #wp-theme-wrap.wp-collapsed {
+  #wp-theme-wrap.wp-collapsed,
+  #wp-info-wrap.wp-collapsed {
     opacity: 0;
     transform: translateY(-12px);
     pointer-events: none;
@@ -70,6 +128,48 @@ const links = [
   const btn = document.getElementById("wp-menu-btn");
   const menu = document.getElementById("wp-menu");
   const themeWrap = document.getElementById("wp-theme-wrap");
+  const infoWrap = document.getElementById("wp-info-wrap");
+  const infoBtn = document.getElementById("wp-info-btn");
+  const infoMenu = document.getElementById("wp-info-menu");
+
+  // "What is this?" popover — same open/close/escape/outside-click behaviour as
+  // the main menu, kept self-contained so the two never fight over focus.
+  let infoOpen = false;
+  if (infoBtn && infoMenu) {
+    const setInfoOpen = (next: boolean) => {
+      infoOpen = next;
+      infoMenu.hidden = !next;
+      infoBtn.setAttribute("aria-expanded", String(next));
+      if (next) {
+        infoWrap?.classList.remove("wp-collapsed");
+        infoMenu.querySelector<HTMLElement>("a")?.focus();
+      }
+    };
+
+    infoBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      setInfoOpen(!infoOpen);
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!infoOpen) return;
+      const t = e.target as Node;
+      const el = t as HTMLElement;
+      if (
+        (!infoMenu.contains(t) && !infoBtn.contains(t)) ||
+        (infoMenu.contains(t) && el.closest?.("a"))
+      ) {
+        setInfoOpen(false);
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (infoOpen && e.key === "Escape") {
+        setInfoOpen(false);
+        infoBtn.focus();
+      }
+    });
+  }
 
   if (btn && menu) {
     let open = false;
@@ -124,6 +224,8 @@ const links = [
           const condense = y > lastY && y > 120;
           btn.classList.toggle("wp-condensed", condense);
           themeWrap?.classList.toggle("wp-collapsed", condense);
+          // Keep the info popover anchor put while it's open.
+          if (!infoOpen) infoWrap?.classList.toggle("wp-collapsed", condense);
         }
         lastY = y;
         ticking = false;
