@@ -22,7 +22,7 @@ export function ShareEmbed({ id, title }: { id: string; title: string }) {
     typeof window === "undefined" ? "https://whypride.gr" : window.location.origin;
   const shareUrl = () => `${origin()}/#${id}`;
   const embedCode = () =>
-    `<iframe src="${origin()}/embed/${id}" width="100%" height="640" style="border:1px solid #e5e7eb;border-radius:12px" loading="lazy" title="${title} — whypride.gr"></iframe>`;
+    `<iframe src="${origin()}/embed/${id}" width="100%" height="640" style="border:1px solid #e5e7eb;border-radius:12px" loading="lazy" title="${title} · whypride.gr"></iframe>`;
 
   const flash = (which: "link" | "embed") => {
     window.clearTimeout(flashTimer.current);
@@ -46,7 +46,7 @@ export function ShareEmbed({ id, title }: { id: string; title: string }) {
     const url = shareUrl();
     if (navigator.share) {
       try {
-        await navigator.share({ title: `${title} — whypride.gr`, url });
+        await navigator.share({ title: `${title} · whypride.gr`, url });
         return;
       } catch {
         // Cancelled or unsupported gesture — fall through to copy.
