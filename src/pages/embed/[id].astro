@@ -1,0 +1,20 @@
+---
+import EmbedLayout from "../../layouts/EmbedLayout.astro";
+import { EmbedChallenge } from "../../components/sections/EmbedChallenge";
+import { challenges } from "../../components/sections/challengeRegistry";
+
+// One static widget page per challenge.
+export function getStaticPaths() {
+  return challenges.map((c) => ({
+    params: { id: c.id },
+    props: { title: c.title },
+  }));
+}
+
+const { id } = Astro.params;
+const { title } = Astro.props;
+---
+
+<EmbedLayout title={`${title} | whypride.gr`}>
+  <EmbedChallenge id={id} client:load />
+</EmbedLayout>
