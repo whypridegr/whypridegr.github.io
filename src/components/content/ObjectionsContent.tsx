@@ -10,7 +10,13 @@ export function ObjectionsContent() {
     <section className="border-t border-border">
       <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
         <Reveal>
-          <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
+          <a
+            href="/#erotiseis"
+            className="inline-flex items-center gap-2 text-sm uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-ink"
+          >
+            <span aria-hidden>←</span> Πίσω στις ερωτήσεις
+          </a>
+          <p className="mt-8 text-xs uppercase tracking-[0.25em] text-muted-foreground">
             Συχνές αντιρρήσεις
           </p>
           <h1 className="mt-4 font-display text-3xl md:text-5xl leading-tight reading-width">
@@ -23,6 +29,25 @@ export function ObjectionsContent() {
         </Reveal>
         <Reveal className="mt-12 md:mt-16" delay={80}>
           <Accordion items={objections} />
+        </Reveal>
+        <Reveal className="mt-16 border-t border-border pt-10" delay={80}>
+          <p className="text-sm text-muted-foreground">
+            Συνέχισε με κάτι πιο διαδραστικό:
+          </p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <a
+              href="/#prokliseis"
+              className="inline-flex items-center gap-2 rounded-md bg-ink px-6 py-3 text-sm uppercase tracking-[0.2em] text-paper transition-colors hover:bg-accent"
+            >
+              Δοκίμασε κάποιες μικρές προκλήσεις
+            </a>
+            <a
+              href="/quiz"
+              className="inline-flex items-center gap-2 rounded-md border border-ink px-6 py-3 text-sm uppercase tracking-[0.2em] transition-colors hover:bg-ink hover:text-paper"
+            >
+              Δοκίμασε πόσο σύμμαχος είσαι
+            </a>
+          </div>
         </Reveal>
       </div>
     </section>

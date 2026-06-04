@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Popover } from "@/components/primitives/Popover";
+import { Modal } from "@/components/primitives/Modal";
 
 const COLS = 16;
 const ROWS = 16;
@@ -117,6 +118,10 @@ export function SegregationSandbox() {
   const [running, setRunning] = useState(false);
   const [reduced, setReduced] = useState(false);
   const [done, setDone] = useState(false);
+  // The conclusion shows as a modal once the simulation settles. Tied to `done`
+  // so it pops once per completed run (the first auto-run, then any deliberate
+  // re-run) rather than nagging on every state change.
+  const [showConclusion, setShowConclusion] = useState(false);
 
   const gridRef = useRef(grid);
   gridRef.current = grid;
@@ -125,6 +130,11 @@ export function SegregationSandbox() {
   const autoStarted = useRef(false);
 
   const seg = useMemo(() => segregation(grid, nb), [grid, nb]);
+
+  // Surface the conclusion modal whenever a run settles.
+  useEffect(() => {
+    if (done) setShowConclusion(true);
+  }, [done]);
 
   // Kick the simulation off on its own the first time it scrolls into view,
   // after a short beat so the section settles first.
@@ -365,17 +375,33 @@ export function SegregationSandbox() {
         </div>
       </div>
 
-      {/* Punchline — appears only after the simulation has settled */}
-      {done && (
-        <p className="lg:col-span-2 reading-width leading-relaxed text-muted-foreground motion-safe:animate-in motion-safe:fade-in motion-safe:duration-700">
-          Κανένας δεν «μισεί» τον διπλανό του. Ζητούν απλώς να μην είναι
-          υπερβολικά μειοψηφία στη γειτονιά τους. Κι όμως, ακόμα και μια{" "}
-          <span className="text-ink">μικρή</span> προτίμηση έφτιαξε έναν κόσμο
-          σχεδόν εντελώς χωρισμένο, χωρίς να το αποφάσισε ποτέ κανείς. Έτσι
-          λειτουργεί και η προκατάληψη: όχι ως μίσος, αλλά ως άθροισμα μικρών,
-          «λογικών» επιλογών.
+      {/* Conclusion — appears as a modal once the simulation has settled, so a
+          first-time visitor understands what they just watched. */}
+      <Modal
+        open={showConclusion}
+        onClose={() => setShowConclusion(false)}
+        label="Τι μόλις είδες"
+      >
+        <div className="pride-rule mb-6 h-1 w-12 rounded-full" />
+        <p className="text-lg leading-relaxed">
+          Κανένας από τους κατοίκους δεν «μισούσε» τον διπλανό του. Ήθελαν απλώς
+          να μην είναι υπερβολικά μειοψηφία στη γειτονιά τους. Κι όμως, μια{" "}
+          <span className="text-ink">μικρή</span> προτίμηση αρκεί για να χωρίσει
+          τον κόσμο στα δύο, χωρίς να το αποφασίσει ποτέ κανείς.
         </p>
-      )}
+        <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+          Αυτό είναι το μοντέλο διαχωρισμού του Thomas Schelling (1971): η
+          προκατάληψη δεν χρειάζεται μίσος, μόνο πολλές μικρές «λογικές» επιλογές.
+        </p>
+        <div className="mt-8 flex justify-end">
+          <button
+            onClick={() => setShowConclusion(false)}
+            className="rounded-md border border-ink px-5 py-2 text-sm uppercase tracking-[0.15em] transition-colors hover:bg-ink hover:text-paper"
+          >
+            Το σκέφτηκα
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 }

@@ -34,11 +34,15 @@ function renderRich(text: string, keyPrefix: string): ReactNode[] {
 export function Accordion({
   items,
   initialVisible,
+  secondaryAction,
 }: {
   items: FaqItem[];
   /** When set (and < items.length), only the first N items show until the
    *  reader expands the rest. Clamped to a sane range; ignored otherwise. */
   initialVisible?: number;
+  /** Optional navigational CTA shown below the list (and beside the "more"
+   *  button when it's present). Stays visible after the list is expanded. */
+  secondaryAction?: { label: string; href: string };
 }) {
   const [open, setOpen] = useState<number | null>(0);
   const [expanded, setExpanded] = useState(false);
@@ -80,16 +84,26 @@ export function Accordion({
           />
         ))}
       </div>
-      {collapsible && !expanded && (
-        <div className="mt-8 text-center">
-          <button
-            onClick={reveal}
-            aria-expanded={false}
-            aria-controls={moreId}
-            className="inline-flex items-center gap-2 rounded-md border border-ink px-5 py-2 text-sm uppercase tracking-[0.15em] transition-colors hover:bg-ink hover:text-paper"
-          >
-            Δες περισσότερες ερωτήσεις
-          </button>
+      {((collapsible && !expanded) || secondaryAction) && (
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          {collapsible && !expanded && (
+            <button
+              onClick={reveal}
+              aria-expanded={false}
+              aria-controls={moreId}
+              className="inline-flex items-center gap-2 rounded-md border border-ink px-5 py-2 text-sm uppercase tracking-[0.15em] transition-colors hover:bg-ink hover:text-paper"
+            >
+              Περισσότερες ερωτήσεις
+            </button>
+          )}
+          {secondaryAction && (
+            <a
+              href={secondaryAction.href}
+              className="inline-flex items-center gap-2 rounded-md border border-ink px-5 py-2 text-sm uppercase tracking-[0.15em] transition-colors hover:bg-ink hover:text-paper"
+            >
+              {secondaryAction.label}
+            </a>
+          )}
         </div>
       )}
     </div>

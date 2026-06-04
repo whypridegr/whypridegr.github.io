@@ -20,7 +20,14 @@ export function HomeContent() {
         id="erotiseis"
         title="Δύσκολες ερωτήσεις και οι απαντήσεις τους."
       >
-        <Accordion items={faq} initialVisible={4} />
+        <Accordion
+          items={faq}
+          initialVisible={4}
+          secondaryAction={{
+            label: "Συχνές αντιρρήσεις",
+            href: "/objections",
+          }}
+        />
       </Section>
 
       {/* — All interactive challenges, gathered into one section (like the
