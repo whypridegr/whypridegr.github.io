@@ -145,7 +145,7 @@ function Item({
         aria-hidden={!open}
         // Keep collapsed source links out of the tab order (and off AT) while
         // they're visually hidden but still in the DOM.
-        {...(open ? {} : { inert: "" })}
+        inert={!open}
         className={cn(
           "grid transition-all duration-500 ease-out",
           open ? "grid-rows-[1fr] opacity-100 pb-8" : "grid-rows-[0fr] opacity-0",
