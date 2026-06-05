@@ -23,8 +23,13 @@ export function Deck() {
   const [index, setIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [seen, setSeen] = useState<Set<number>>(new Set());
-  const scrollToRef = useRef<((i: number) => void) | null>(null);
-  const lastUrlId = useRef<string | null>(null);
+  const scrollToRef = useRef<((i: number, instant?: boolean) => void) | null>(null);
+  // Seed with the initial active id so the first (mount) URL-sync run is a no-op:
+  // it must NOT rewrite location.search on load, or it would (a) clobber an
+  // incoming ?c= deep-link before the deep-link effect reads it, and (b) dirty a
+  // clean "/" with ?c= before the visitor has moved. The URL only starts
+  // reflecting the active id once it changes from this initial one.
+  const lastUrlId = useRef<string | null>(challengeIds[0] ?? null);
 
   // Variant detection + keep in sync on resize.
   useEffect(() => {
@@ -87,18 +92,33 @@ export function Deck() {
     return () => window.removeEventListener("keydown", onKey);
   }, [goTo, index]);
 
-  // Resolve a deep-link (?c=mythoi) once, after mount. Child effects (which
-  // register `scrollToRef`) run before this parent effect, so goTo can scroll.
+  // Resolve a deep-link (?c=mythoi) once, after mount. Set the index immediately,
+  // then jump INSTANTLY to the scene and re-assert after lazy-mounted scenes
+  // settle their heights (a smooth scroll would chase a moving target as content
+  // below mounts and grows). On mobile `scrollToRef` is null, so the no-op is fine.
   useEffect(() => {
     const i = indexForId(parseDeckParam(window.location.search, challengeIds), challengeIds);
-    if (i > 0) goTo(i);
+    if (i <= 0) return;
+    setIndex(i);
+    const jump = () => scrollToRef.current?.(i, true);
+    const raf = requestAnimationFrame(jump);
+    const t1 = window.setTimeout(jump, 250);
+    const t2 = window.setTimeout(jump, 600);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const current = challenges[index];
-  const registerScrollTo = useCallback((fn: (i: number) => void) => {
-    scrollToRef.current = fn;
-  }, []);
+  const registerScrollTo = useCallback(
+    (fn: (i: number, instant?: boolean) => void) => {
+      scrollToRef.current = fn;
+    },
+    [],
+  );
 
   return (
     <div className="relative">

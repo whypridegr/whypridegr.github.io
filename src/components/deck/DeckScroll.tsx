@@ -13,8 +13,9 @@ export function DeckScroll({
   activeIndex: number;
   onActiveChange: (i: number) => void;
   onEngage: (id: string) => void;
-  /** Parent calls the registered fn to scroll a given index to centre. */
-  registerScrollTo: (fn: (i: number) => void) => void;
+  /** Parent calls the registered fn to scroll a given index to centre.
+   *  `instant` jumps without smooth animation (used for initial deep-links). */
+  registerScrollTo: (fn: (i: number, instant?: boolean) => void) => void;
 }) {
   const sceneRefs = useRef<(HTMLElement | null)[]>([]);
   // While a button/random scroll is in flight, ignore intermediate scenes the
@@ -23,16 +24,16 @@ export function DeckScroll({
   const pendingTimer = useRef<number | undefined>(undefined);
 
   useEffect(() => {
-    registerScrollTo((i: number) => {
+    registerScrollTo((i: number, instant = false) => {
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       pendingTarget.current = i;
       window.clearTimeout(pendingTimer.current);
-      // Fallback: release the lock even if scrollend never fires.
+      // Fallback: release the lock even if the target is never reached.
       pendingTimer.current = window.setTimeout(() => {
         pendingTarget.current = null;
       }, 1000);
       sceneRefs.current[i]?.scrollIntoView({
-        behavior: reduced ? "auto" : "smooth",
+        behavior: instant || reduced ? "auto" : "smooth",
         block: "center",
       });
     });
