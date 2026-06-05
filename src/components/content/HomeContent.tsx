@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Link } from "@/components/site/Link";
 import { Accordion } from "@/components/primitives/Accordion";
 import { Reveal } from "@/components/primitives/Reveal";
-import { ChallengeHub } from "@/components/sections/ChallengeHub";
+import { Deck } from "@/components/deck/Deck";
 import { GlossarySection } from "@/components/sections/GlossarySection";
 import { Timeline } from "@/components/sections/Timeline";
 import { faq } from "@/content/faq";
@@ -14,6 +14,10 @@ export function HomeContent() {
   return (
     <>
       <Hero />
+
+      <section id="prokliseis" aria-label="Οι προκλήσεις" className="border-t border-border">
+        <Deck />
+      </section>
 
       {/* — Questions first: the thing people actually come with — */}
       <Section
@@ -28,13 +32,6 @@ export function HomeContent() {
             href: "/objections",
           }}
         />
-      </Section>
-
-      {/* — All interactive challenges, gathered into one section (like the
-          quiz). A launcher grid up top; one challenge opens inline at a time,
-          so the page no longer scrolls endlessly through every interactive. — */}
-      <Section id="prokliseis">
-        <ChallengeHub />
       </Section>
 
       {/* — Warm beat + nudge toward the reference material below — */}
@@ -210,7 +207,7 @@ function Hero() {
         </p>
         <div className="mt-10 flex flex-wrap gap-3">
           <a
-            href="#erotiseis"
+            href="#prokliseis"
             className="px-6 py-3 text-sm uppercase tracking-[0.2em] bg-ink text-paper rounded-md hover:bg-accent transition-colors"
           >
             Πάμε
@@ -288,7 +285,9 @@ function NextSectionButton() {
   useEffect(() => {
     const interacted = new Set<string>();
     const sections = () =>
-      Array.from(document.querySelectorAll<HTMLElement>("section[id]"));
+      Array.from(
+        document.querySelectorAll<HTMLElement>("section[id]"),
+      ).filter((s) => !s.id.startsWith("deck-"));
 
     const currentSection = () => {
       let cur: HTMLElement | null = null;
@@ -339,7 +338,7 @@ function NextSectionButton() {
     ).matches;
     const sections = Array.from(
       document.querySelectorAll<HTMLElement>("section[id]"),
-    );
+    ).filter((s) => !s.id.startsWith("deck-"));
     // First section whose top is meaningfully below the viewport top.
     const next = sections.find((s) => s.getBoundingClientRect().top > 80);
     next?.scrollIntoView({
