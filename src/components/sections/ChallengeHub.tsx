@@ -22,7 +22,7 @@ export function ChallengeHub() {
 
   const goRandom = () => {
     const next = pickNext(challengeIds);
-    window.location.href = next ? `/challenge/${next}` : "/#telos";
+    window.location.href = next ? `/?c=${next}` : "/#telos";
   };
 
   return (
