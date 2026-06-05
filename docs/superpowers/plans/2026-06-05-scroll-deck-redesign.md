@@ -110,9 +110,10 @@ test("parseDeckParam only accepts known ids", () => {
   expect(DECK_PARAM).toBe("c");
 });
 
-test("deckUrl builds a relative query url", () => {
+test("deckUrl reflects id and preserves other query params", () => {
   expect(deckUrl("c")).toBe("/?c=c");
-  expect(deckUrl("c", "/foo")).toBe("/foo?c=c");
+  expect(deckUrl("c", "?x=1", "/foo")).toBe("/foo?x=1&c=c");
+  expect(deckUrl("d", "?c=a&x=1")).toBe("/?c=d&x=1");
 });
 ```
 
@@ -180,9 +181,11 @@ export function parseDeckParam(search: string, ids: string[]): string | null {
   return id && ids.includes(id) ? id : null;
 }
 
-/** Relative URL reflecting the active id ("/?c=mythoi"). */
-export function deckUrl(id: string, pathname = "/"): string {
-  return `${pathname}?${DECK_PARAM}=${encodeURIComponent(id)}`;
+/** Relative URL reflecting the active id, preserving any other query params. */
+export function deckUrl(id: string, search = "", pathname = "/"): string {
+  const params = new URLSearchParams(search);
+  params.set(DECK_PARAM, id);
+  return `${pathname}?${params.toString()}`;
 }
 ```
 
@@ -334,18 +337,25 @@ export function DeckScene({
   const ref = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(variant === "swipe");
 
-  // Mount the heavy interactive only when near the viewport (scroll variant).
+  // Mount the heavy interactive the first time it nears the viewport, then keep
+  // it mounted — unmounting would reset the challenge's local state and can
+  // flash on remount (Codex review #5). IO here is a one-shot mount trigger.
   useEffect(() => {
-    if (variant !== "scroll") return;
+    if (variant !== "scroll" || mounted) return;
     const node = ref.current;
     if (!node) return;
     const io = new IntersectionObserver(
-      ([e]) => setMounted(e.isIntersecting),
+      ([e]) => {
+        if (e.isIntersecting) {
+          setMounted(true);
+          io.disconnect();
+        }
+      },
       { rootMargin: "75% 0px 75% 0px" },
     );
     io.observe(node);
     return () => io.disconnect();
-  }, [variant]);
+  }, [variant, mounted]);
 
   // First real interaction marks the challenge done.
   useEffect(() => {
@@ -426,6 +436,10 @@ Append to `src/styles/global.css`:
 
 .deck-scene {
   position: relative;
+  /* Fallback (no scroll-linked animation): each scene is one viewport tall, so
+     scrollIntoView({block:"center"}) lands cleanly and there's no scale scrub.
+     Overridden to 180vh only where view() is supported (below). */
+  min-height: 100dvh;
 }
 
 .deck-stage {
@@ -449,7 +463,7 @@ Append to `src/styles/global.css`:
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
     .deck-scene {
-      /* gives the scene scroll length for the scrub */
+      /* extra scroll length gives the scrub room to scale up and back */
       min-height: 180vh;
       view-timeline-name: --deck-scene;
     }
@@ -532,10 +546,21 @@ export function DeckScroll({
   registerScrollTo: (fn: (i: number) => void) => void;
 }) {
   const sceneRefs = useRef<(HTMLDivElement | null)[]>([]);
+  // While a button/random scroll is in flight, ignore intermediate scenes the
+  // smooth-scroll passes through; only commit once the target is centred
+  // (Codex review #1 and #3).
+  const pendingTarget = useRef<number | null>(null);
+  const pendingTimer = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     registerScrollTo((i: number) => {
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      pendingTarget.current = i;
+      window.clearTimeout(pendingTimer.current);
+      // Fallback: release the lock even if scrollend never fires.
+      pendingTimer.current = window.setTimeout(() => {
+        pendingTarget.current = null;
+      }, 1000);
       sceneRefs.current[i]?.scrollIntoView({
         behavior: reduced ? "auto" : "smooth",
         block: "center",
@@ -543,29 +568,50 @@ export function DeckScroll({
     });
   }, [registerScrollTo]);
 
-  // Active = scene whose centre is nearest the viewport centre.
+  // Active = scene whose centre is nearest the viewport centre. Computed on a
+  // passive, rAF-throttled scroll listener (not IO) so it stays accurate during
+  // fast/momentum scroll — IO only fires on threshold crossings.
   useEffect(() => {
-    const nodes = sceneRefs.current.filter(Boolean) as HTMLDivElement[];
-    if (!nodes.length) return;
-    const io = new IntersectionObserver(
-      () => {
-        const mid = window.innerHeight / 2;
-        let best = 0;
-        let bestDist = Infinity;
-        nodes.forEach((n, i) => {
-          const r = n.getBoundingClientRect();
-          const dist = Math.abs(r.top + r.height / 2 - mid);
-          if (dist < bestDist) {
-            bestDist = dist;
-            best = i;
-          }
-        });
-        onActiveChange(best);
-      },
-      { threshold: [0, 0.25, 0.5, 0.75, 1] },
-    );
-    nodes.forEach((n) => io.observe(n));
-    return () => io.disconnect();
+    let raf = 0;
+    const compute = () => {
+      raf = 0;
+      const nodes = sceneRefs.current;
+      const mid = window.innerHeight / 2;
+      let best = 0;
+      let bestDist = Infinity;
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i];
+        if (!n) continue;
+        const r = n.getBoundingClientRect();
+        const dist = Math.abs(r.top + r.height / 2 - mid);
+        if (dist < bestDist) {
+          bestDist = dist;
+          best = i;
+        }
+      }
+      // Respect an in-flight programmatic target: only commit it once reached.
+      if (pendingTarget.current !== null) {
+        if (best === pendingTarget.current) {
+          pendingTarget.current = null;
+          window.clearTimeout(pendingTimer.current);
+          onActiveChange(best);
+        }
+        return;
+      }
+      onActiveChange(best);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(compute);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    compute();
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+      window.clearTimeout(pendingTimer.current);
+    };
   }, [onActiveChange]);
 
   return (
@@ -637,17 +683,41 @@ export function DeckSwiper({
   onActiveChange: (i: number) => void;
   onEngage: (id: string) => void;
 }) {
-  const startX = useRef<number | null>(null);
+  const start = useRef<{ x: number; y: number } | null>(null);
+  // null = undecided, "h" = horizontal swipe locked, "v" = vertical scroll (bail)
+  const intent = useRef<null | "h" | "v">(null);
   const last = challenges.length - 1;
 
   const onPointerDown = (e: React.PointerEvent) => {
-    startX.current = e.clientX;
+    start.current = { x: e.clientX, y: e.clientY };
+    intent.current = null;
+    // Keep receiving move/up even if the finger leaves the element.
+    e.currentTarget.setPointerCapture?.(e.pointerId);
   };
-  const onPointerUp = (e: React.PointerEvent) => {
-    if (startX.current === null) return;
-    const dx = e.clientX - startX.current;
-    startX.current = null;
-    if (Math.abs(dx) < 48) return; // tap / too small
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!start.current || intent.current === "v") return;
+    const dx = e.clientX - start.current.x;
+    const dy = e.clientY - start.current.y;
+    if (intent.current === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+      // Horizontal only when clearly more horizontal than vertical; otherwise
+      // let the page scroll vertically (touch-action: pan-y handles the rest).
+      intent.current = Math.abs(dx) > Math.abs(dy) * 1.2 ? "h" : "v";
+    }
+  };
+
+  const commit = (e: React.PointerEvent) => {
+    e.currentTarget.releasePointerCapture?.(e.pointerId);
+    if (!start.current || intent.current !== "h") {
+      start.current = null;
+      intent.current = null;
+      return;
+    }
+    const dx = e.clientX - start.current.x;
+    start.current = null;
+    intent.current = null;
+    const threshold = Math.max(48, e.currentTarget.clientWidth * 0.12);
+    if (Math.abs(dx) < threshold) return;
     if (dx < 0 && activeIndex < last) onActiveChange(activeIndex + 1);
     if (dx > 0 && activeIndex > 0) onActiveChange(activeIndex - 1);
   };
@@ -656,23 +726,39 @@ export function DeckSwiper({
     <div
       className="deck-swiper"
       onPointerDown={onPointerDown}
-      onPointerUp={onPointerUp}
-      onPointerCancel={() => (startX.current = null)}
+      onPointerMove={onPointerMove}
+      onPointerUp={commit}
+      onPointerCancel={commit}
+      aria-roledescription="carousel"
+      aria-label="Προκλήσεις"
     >
       <div
         className="deck-swipe-track"
         style={{ transform: `translateX(-${activeIndex * 100}%)` }}
       >
-        {challenges.map((c, i) => (
-          <div key={c.id} className="deck-swipe-cell" aria-hidden={i !== activeIndex}>
-            <DeckScene
-              challenge={c}
-              variant="swipe"
-              interactive={i === activeIndex}
-              onEngage={onEngage}
-            />
-          </div>
-        ))}
+        {challenges.map((c, i) => {
+          const isActive = i === activeIndex;
+          return (
+            // `inert` (React 19 supports the prop) removes inactive cells from
+            // tab order AND the a11y tree — aria-hidden alone leaves their
+            // buttons focusable (Codex review #7).
+            <div
+              key={c.id}
+              className="deck-swipe-cell"
+              role="group"
+              aria-roledescription="slide"
+              aria-label={`${i + 1} από ${challenges.length}`}
+              inert={!isActive}
+            >
+              <DeckScene
+                challenge={c}
+                variant="swipe"
+                interactive={isActive}
+                onEngage={onEngage}
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -724,14 +810,13 @@ import { DeckSwiper } from "@/components/deck/DeckSwiper";
 const LEN = challengeIds.length;
 
 export function Deck() {
-  const [index, setIndex] = useState(() => {
-    if (typeof window === "undefined") return 0;
-    const fromUrl = indexForId(parseDeckParam(window.location.search, challengeIds), challengeIds);
-    return fromUrl >= 0 ? fromUrl : 0;
-  });
+  // Always start at 0 so SSR and first client render match; the deep-link is
+  // resolved in an effect after mount (Codex review #2 — hydration safety).
+  const [index, setIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [seen, setSeen] = useState<Set<number>>(new Set());
   const scrollToRef = useRef<((i: number) => void) | null>(null);
+  const lastUrlId = useRef<string | null>(null);
 
   // Variant detection + keep in sync on resize.
   useEffect(() => {
@@ -748,10 +833,18 @@ export function Deck() {
     setSeen(new Set(challengeIds.map((id, i) => (doneIds.has(id) ? i : -1)).filter((i) => i >= 0)));
   }, []);
 
-  // Reflect active id in the URL (replace, so back/forward isn't spammed).
+  // Reflect active id in the URL — replaceState (no history spam), deduped so
+  // intermediate scenes during a scroll don't churn the URL (Codex review #4),
+  // and preserving any other query params.
   useEffect(() => {
     const id = idForIndex(index, challengeIds);
-    if (id) history.replaceState(null, "", deckUrl(id, window.location.pathname));
+    if (!id || id === lastUrlId.current) return;
+    lastUrlId.current = id;
+    history.replaceState(
+      null,
+      "",
+      deckUrl(id, window.location.search, window.location.pathname),
+    );
   }, [index]);
 
   // On desktop, scrolling drives `index` (via DeckScroll). The chrome buttons
@@ -785,6 +878,14 @@ export function Deck() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [goTo, index]);
+
+  // Resolve a deep-link (?c=mythoi) once, after mount. Child effects (which
+  // register `scrollToRef`) run before this parent effect, so goTo can scroll.
+  useEffect(() => {
+    const i = indexForId(parseDeckParam(window.location.search, challengeIds), challengeIds);
+    if (i > 0) goTo(i);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const current = challenges[index];
   const registerScrollTo = useCallback((fn: (i: number) => void) => {
@@ -1004,5 +1105,6 @@ git commit -m "fix(deck): address issues found in verification"
 
 - **Spec coverage:** deck=9 challenges (Tasks 5/6 render `challenges`), hybrid desktop/mobile (Tasks 4/5/6), sequential prev/next + random (Tasks 1/2/7), enter from hero (Task 9), `/contents` grid (Task 7), `/challenge`+`/embed` untouched (verified Task 10), editorial-restrained chrome (Task 2, no rainbow banner), reduced-motion + keyboard + a11y (Tasks 4/6/7/10), URL state survives reload (Tasks 1/7, verified 10). IA Hero→deck→reference (Task 9).
 - **Type consistency:** `deckState` signatures (`ids`/`len` args, injectable `randomFn`) are used identically in `Deck.tsx`. `Challenge` type imported from the registry everywhere. `registerScrollTo`/`scrollToRef` contract matches between `DeckScroll` and `Deck`.
-- **Known risk to validate during execution:** the CSS `view()` zoom and the IntersectionObserver "active scene" math are the only parts that can't be unit-tested — Task 10 covers them manually. If `view()` proves too aggressive/janky, the fallback (no scrub, static scenes) is already wired via `@supports`/reduced-motion and the deck remains fully functional.
+- **Known risk to validate during execution:** the CSS `view()` zoom and the rAF "active scene" math are the only parts that can't be unit-tested — Task 10 covers them manually. If `view()` proves too aggressive/janky, the fallback (no scrub, static scenes) is already wired via `@supports`/reduced-motion and the deck remains fully functional.
+- **Codex plan review incorporated:** active index uses a passive rAF scroll listener, not IO (IO is one-shot lazy-mount only); deep-link resolved post-mount to avoid hydration mismatch; scenes mount-once (no state-losing unmount); programmatic scroll uses a pending-target lock to avoid intermediate-scene churn; URL sync is deduped and preserves other query params; swipe uses pointer capture + horizontal-intent lock + width-relative threshold; inactive swipe cells use `inert` (not just `aria-hidden`); explicit non-`view()` fallback geometry (`100dvh` scenes). The canonical index lives in `Deck` above both variants, so rotating across the mobile/desktop breakpoint preserves the active challenge.
 ```
