@@ -49,17 +49,17 @@ export function ChallengePage({ id }: { id: string }) {
   const allDone = doneCount >= TOTAL;
   const goNext = () => {
     const next = pickNext(challengeIds, id);
-    window.location.href = next ? `/challenge/${next}` : "/#telos";
+    window.location.href = next ? `/challenge/${next}` : "/prokliseis#telos";
   };
   const goDone = () => {
-    window.location.href = "/#telos";
+    window.location.href = "/prokliseis#telos";
   };
 
   return (
     <article className="mx-auto max-w-6xl px-6 pb-24 pt-24 md:pt-28">
       <div className="flex items-start justify-between gap-4">
         <a
-          href="/#prokliseis"
+          href="/prokliseis"
           className="inline-flex items-center gap-2 text-sm uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-ink"
         >
           <span aria-hidden>←</span> Όλες οι προκλήσεις

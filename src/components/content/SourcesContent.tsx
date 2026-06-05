@@ -3,10 +3,7 @@ import { sources } from "@/content/sources";
 export function SourcesContent() {
   return (
     <div className="mx-auto max-w-6xl px-6 pt-24 pb-20">
-      <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
-        Πηγές
-      </p>
-      <h1 className="mt-4 font-display text-5xl md:text-7xl leading-[1.05] reading-width">
+      <h1 className="font-display text-5xl md:text-7xl leading-[1.05] reading-width text-balance">
         Πού βασιζόμαστε.
       </h1>
       <p className="mt-6 max-w-xl text-lg text-muted-foreground leading-relaxed">

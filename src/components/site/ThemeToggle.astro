@@ -33,14 +33,25 @@
     el.classList.toggle("dark", dark);
     el.style.colorScheme = dark ? "dark" : "light";
     btn?.setAttribute("aria-pressed", String(dark));
+    // Remember the choice so it survives navigation (this is an MPA — every
+    // internal link is a fresh load) and is re-applied pre-paint next time.
+    try {
+      localStorage.setItem("wp-theme", dark ? "dark" : "light");
+    } catch {}
   };
 
   btn?.setAttribute("aria-pressed", String(isDark()));
 
-  // Once the reader flips it by hand, stop following the device theme for the
-  // rest of the session — otherwise an OS sunset/sunrise would silently undo
-  // their choice. Still not persisted across reloads (by design).
-  let manual = false;
+  // Once the reader flips it by hand, stop following the device theme —
+  // otherwise an OS sunset/sunrise would silently undo their choice. A stored
+  // override (from a previous page) counts as a manual choice too.
+  let manual = (() => {
+    try {
+      return !!localStorage.getItem("wp-theme");
+    } catch {
+      return false;
+    }
+  })();
   btn?.addEventListener("click", () => {
     manual = true;
     apply(isDark() ? "light" : "dark");

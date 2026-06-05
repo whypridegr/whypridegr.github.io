@@ -25,6 +25,8 @@ export function DeckScroll({
 
   useEffect(() => {
     registerScrollTo((i: number, instant = false) => {
+      const el = sceneRefs.current[i];
+      if (!el) return;
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       pendingTarget.current = i;
       window.clearTimeout(pendingTimer.current);
@@ -32,10 +34,21 @@ export function DeckScroll({
       pendingTimer.current = window.setTimeout(() => {
         pendingTarget.current = null;
       }, 1000);
-      sceneRefs.current[i]?.scrollIntoView({
-        behavior: instant || reduced ? "auto" : "smooth",
-        block: "center",
-      });
+      // Explicit scroll math (not scrollIntoView, which is browser-dependent
+      // near the document edges).
+      const V = window.innerHeight;
+      const pageTop = el.getBoundingClientRect().top + window.scrollY;
+      const max = document.documentElement.scrollHeight - V;
+      // Short scenes: centre them, so they sit at the zoom's full-scale peak.
+      // Tall scenes (content past one viewport): align the top just under the
+      // sticky chrome so the title shows first and you read top-to-bottom.
+      const HEADER = 72;
+      const raw =
+        el.offsetHeight <= V * 1.05
+          ? pageTop - (V - el.offsetHeight) / 2
+          : pageTop - HEADER;
+      const top = Math.max(0, Math.min(raw, max));
+      window.scrollTo({ top, behavior: instant || reduced ? "auto" : "smooth" });
     });
   }, [registerScrollTo]);
 
@@ -48,28 +61,39 @@ export function DeckScroll({
       raf = 0;
       const nodes = sceneRefs.current;
       const mid = window.innerHeight / 2;
+      // Active = the scene the viewport's midline falls inside. This tracks
+      // "what you're reading" even on tall scenes that run past one screen —
+      // unlike nearest-centre, which flipped to the next scene while you were
+      // still on the current one's lower half. Nearest-centre is only the
+      // fallback for any gap the midline isn't inside.
+      let chosen = -1;
       let best = 0;
       let bestDist = Infinity;
       for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i];
         if (!n) continue;
         const r = n.getBoundingClientRect();
+        if (r.top <= mid && r.bottom > mid) {
+          chosen = i;
+          break;
+        }
         const dist = Math.abs(r.top + r.height / 2 - mid);
         if (dist < bestDist) {
           bestDist = dist;
           best = i;
         }
       }
+      const idx = chosen >= 0 ? chosen : best;
       // Respect an in-flight programmatic target: only commit it once reached.
       if (pendingTarget.current !== null) {
-        if (best === pendingTarget.current) {
+        if (idx === pendingTarget.current) {
           pendingTarget.current = null;
           window.clearTimeout(pendingTimer.current);
-          onActiveChange(best);
+          onActiveChange(idx);
         }
         return;
       }
-      onActiveChange(best);
+      onActiveChange(idx);
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(compute);
@@ -97,15 +121,16 @@ export function DeckScroll({
           className="deck-scene"
           aria-label={c.title}
         >
-          <div className="deck-stage">
-            <div className="deck-scaler">
-              <DeckScene
-                challenge={c}
-                variant="scroll"
-                interactive={i === activeIndex}
-                onEngage={onEngage}
-              />
-            </div>
+          {/* The scaler carries the scroll-driven zoom. The transform lives on
+              this inner element, never the <section> we measure for active-
+              scene/scroll math — a transform would distort getBoundingClientRect. */}
+          <div className="deck-scaler">
+            <DeckScene
+              challenge={c}
+              variant="scroll"
+              interactive={i === activeIndex}
+              onEngage={onEngage}
+            />
           </div>
         </section>
       ))}

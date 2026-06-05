@@ -16,10 +16,7 @@ export function ObjectionsContent() {
           >
             <span aria-hidden>←</span> Πίσω στις ερωτήσεις
           </a>
-          <p className="mt-8 text-xs uppercase tracking-[0.25em] text-muted-foreground">
-            Συχνές αντιρρήσεις
-          </p>
-          <h1 className="mt-4 font-display text-3xl md:text-5xl leading-tight reading-width">
+          <h1 className="mt-8 font-display text-3xl md:text-5xl leading-tight reading-width text-balance">
             Είναι αμαρτία; Επιλογή; Αρρώστια;
           </h1>
           <p className="mt-6 max-w-xl text-lg text-muted-foreground leading-relaxed">
@@ -36,7 +33,7 @@ export function ObjectionsContent() {
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <a
-              href="/#prokliseis"
+              href="/prokliseis"
               className="inline-flex items-center gap-2 rounded-md bg-ink px-6 py-3 text-sm uppercase tracking-[0.2em] text-paper transition-colors hover:bg-accent"
             >
               Δοκίμασε κάποιες μικρές προκλήσεις

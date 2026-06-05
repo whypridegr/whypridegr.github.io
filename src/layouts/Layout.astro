@@ -84,12 +84,16 @@ const canonicalURL = new URL(pathname, Astro.site).href;
       ))
     }
 
-    {/* No-flash theme: light by default, dark only if the device asks for it.
-        Device-driven (no stored override), runs before paint. */}
+    {/* No-flash theme: a stored choice (wp-theme) wins; otherwise follow the
+        device preference. Runs before paint so navigation never flashes. */}
     <script is:inline>
       (function () {
         try {
-          var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var stored = null;
+          try { stored = localStorage.getItem("wp-theme"); } catch (e) {}
+          var dark = stored
+            ? stored === "dark"
+            : window.matchMedia("(prefers-color-scheme: dark)").matches;
           var el = document.documentElement;
           el.classList.toggle("dark", dark);
           el.style.colorScheme = dark ? "dark" : "light";

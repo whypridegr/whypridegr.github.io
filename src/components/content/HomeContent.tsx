@@ -3,9 +3,9 @@ import { cn } from "@/lib/utils";
 import { Link } from "@/components/site/Link";
 import { Accordion } from "@/components/primitives/Accordion";
 import { Reveal } from "@/components/primitives/Reveal";
-import { Deck } from "@/components/deck/Deck";
 import { GlossarySection } from "@/components/sections/GlossarySection";
 import { Timeline } from "@/components/sections/Timeline";
+import { HandoffSentinel } from "@/components/site/HandoffSentinel";
 import { faq } from "@/content/faq";
 import { sources } from "@/content/sources";
 
@@ -15,11 +15,9 @@ export function HomeContent() {
     <>
       <Hero />
 
-      <section id="prokliseis" aria-label="Οι προκλήσεις" className="border-t border-border">
-        <Deck />
-      </section>
-
-      {/* — Questions first: the thing people actually come with — */}
+      {/* — Questions first: the thing people actually come with. Right after
+          them, the deck takes over (for visitors who scroll instead of tapping
+          "Πάμε"). — */}
       <Section
         id="erotiseis"
         title="Δύσκολες ερωτήσεις και οι απαντήσεις τους."
@@ -34,43 +32,18 @@ export function HomeContent() {
         />
       </Section>
 
-      {/* — Warm beat + nudge toward the reference material below — */}
-      <section id="telos" data-spy className="border-t border-border">
-        <div className="mx-auto max-w-6xl px-6 py-24 md:py-32 text-center">
-          <Reveal>
-            <div className="pride-rule mx-auto h-1 w-16 rounded-full" />
-            <p className="mx-auto mt-8 max-w-xl font-display text-2xl md:text-3xl leading-snug">
-              Ελπίζουμε να σε κάναμε να προβληματιστείς, έστω και λίγο.
-            </p>
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground leading-relaxed">
-              Αν θες, κάνε κάτι μικρό μ' αυτά. Φέτος γίνονται Pride σε πολλές
-              πόλεις· πέρνα έστω από μακριά, χωρίς να συμμετέχεις, και δες μόνος
-              σου αν είναι όντως αυτό που σου είχαν πει. Ή πιάσε κουβέντα με
-              κάποιον γνωστό σου από την κοινότητα. Τις πιο πολλές φορές δεν
-              υπάρχει κάτι να μας χωρίζει, ούτε κάτι να φοβηθείς.
-            </p>
-            <div className="mt-12 flex flex-col items-center gap-8">
-              <a
-                href="/quiz"
-                className="rounded-md bg-ink px-6 py-3 text-sm uppercase tracking-[0.2em] text-paper transition-colors hover:bg-accent"
-              >
-                Ώρα να δούμε πόσο ally είσαι
-              </a>
-              <a
-                href="#glossari"
-                className="inline-flex flex-col items-center gap-1 text-sm uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-ink"
-              >
-                Μάθε περισσότερα
-                <span aria-hidden className="text-xl leading-none">
-                  ↓
-                </span>
-              </a>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      {/* Keep scrolling past the questions and the deck takes over — no button,
+          just a guided handoff (animated by the global view transition). Only
+          for first-timers: once someone has seen the challenges it stays out of
+          the way, so the reference material below is freely scrollable. */}
+      <HandoffSentinel
+        to="/prokliseis"
+        label="Συνέχισε στις προκλήσεις"
+        suppressKey="wp-deck-seen"
+      />
 
-      {/* — Reference material — */}
+      {/* — Reference material: the calm, informative side of the home. Sits
+          below the handoff, reachable once you're no longer being guided. — */}
       <section id="glossari" data-spy className="border-t border-border">
         <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
           <Reveal>
@@ -91,12 +64,7 @@ export function HomeContent() {
         <Timeline />
       </Section>
 
-      <Section
-        id="piges"
-        eyebrow="Πηγές"
-        title="Όλα όσα διάβασες, με links."
-        spy={false}
-      >
+      <Section id="piges" title="Όλα όσα διάβασες, με links.">
         <ul className="reading-width divide-y divide-border border-y border-border">
           {sources.slice(0, 5).map((s) => (
             <li key={s.url} className="py-4">
@@ -207,7 +175,7 @@ function Hero() {
         </p>
         <div className="mt-10 flex flex-wrap gap-3">
           <a
-            href="#prokliseis"
+            href="/prokliseis"
             className="px-6 py-3 text-sm uppercase tracking-[0.2em] bg-ink text-paper rounded-md hover:bg-accent transition-colors"
           >
             Πάμε
@@ -216,7 +184,7 @@ function Hero() {
             href="/quiz"
             className="px-6 py-3 text-sm uppercase tracking-[0.2em] border border-ink rounded-md hover:bg-ink hover:text-paper transition-colors"
           >
-            Δες πόσο ally είσαι <b className="font-bold">όντως</b>
+            Δες πόσο σύμμαχος είσαι
           </a>
         </div>
       </div>
@@ -254,7 +222,7 @@ function Section({
               </p>
             )}
             {title && (
-              <h2 className="mt-4 font-display text-3xl md:text-5xl leading-tight reading-width">
+              <h2 className="mt-4 font-display text-3xl md:text-5xl leading-tight reading-width text-balance">
                 {splitSentences(title).map((line, i) => (
                   <span key={i} className="block">
                     {line}

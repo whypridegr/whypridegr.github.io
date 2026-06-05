@@ -70,13 +70,14 @@ export function DeckScene({
         !interactive && "pointer-events-none select-none",
       )}
     >
-      <p className="text-[0.7rem] uppercase tracking-[0.3em] text-muted-foreground">
-        {challenge.label}
-      </p>
-      <h2 className="mt-3 font-display text-3xl md:text-5xl leading-tight reading-width">
+      {/* The big editorial title is the scene's headline (and accessible
+          heading). No small uppercase eyebrow above it — that read as a
+          redundant second title. Sized to stay on one line on desktop and to
+          leave room for the challenge content below. */}
+      <h2 className="max-w-4xl font-display text-2xl sm:text-3xl md:text-4xl leading-[1.08] tracking-tight text-balance">
         {challenge.title}
       </h2>
-      <div className="mt-8 w-full text-left">
+      <div className="mt-6 md:mt-8 w-full text-left">
         {mounted ? challenge.render() : <div aria-hidden className="min-h-[40vh]" />}
       </div>
     </div>

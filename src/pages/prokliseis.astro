@@ -1,0 +1,53 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { Deck } from "../components/deck/Deck";
+import { HandoffSentinel } from "../components/site/HandoffSentinel";
+---
+
+<Layout
+  title="Οι προκλήσεις | WhyPride.gr"
+  description="Σύντομες σκηνές που βάζουν τα συνηθισμένα επιχειρήματα σε δοκιμασία. Πάρε τες με τη σειρά ή στην τύχη."
+>
+  <Deck client:load />
+
+  {/* Closing thoughts — the beat after the eighth challenge. It carries the
+      onward buttons; the deck's progress bar fills right up to the end of this
+      section. */}
+  <section id="telos" class="border-t border-border">
+    <div class="mx-auto max-w-6xl px-6 py-24 md:py-32 text-center">
+      <div class="pride-rule mx-auto h-1 w-16 rounded-full"></div>
+      <p
+        class="mx-auto mt-8 max-w-xl font-display text-2xl md:text-3xl leading-snug text-balance"
+      >
+        Ελπίζουμε να σε κάναμε να προβληματιστείς, έστω και λίγο.
+      </p>
+      <p class="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground leading-relaxed">
+        Αν θες, κάνε κάτι μικρό μ' αυτά. Φέτος γίνονται Pride σε πολλές πόλεις·
+        πέρνα έστω από μακριά, χωρίς να συμμετέχεις, και δες μόνος σου αν είναι
+        όντως αυτό που σου είχαν πει. Ή πιάσε κουβέντα με κάποιον γνωστό σου από
+        την κοινότητα. Τις πιο πολλές φορές δεν υπάρχει κάτι να μας χωρίζει, ούτε
+        κάτι να φοβηθείς.
+      </p>
+      <div class="mt-12 flex flex-col items-center gap-8">
+        <a
+          href="/quiz"
+          class="rounded-md bg-ink px-6 py-3 text-sm uppercase tracking-[0.2em] text-paper transition-colors hover:bg-accent"
+        >
+          Ώρα να δεις πόσο σύμμαχος είσαι
+        </a>
+        <a
+          href="/#glossari"
+          class="inline-flex flex-col items-center gap-1 text-sm uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-ink"
+        >
+          Μάθε περισσότερα
+          <span aria-hidden class="text-xl leading-none">↓</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* Scrolling past the closing carries the reader on to the glossary back home
+      (animated by the global view transition). The "Μάθε περισσότερα ↓" above is
+      the visible cue, so this sentinel stays silent. */}
+  <HandoffSentinel client:load to="/#glossari" label="Μάθε περισσότερα" hint={false} />
+</Layout>

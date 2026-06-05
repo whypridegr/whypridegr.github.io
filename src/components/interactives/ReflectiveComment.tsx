@@ -5,14 +5,19 @@ import { reflections, composerReflection } from "@/content/reflections";
 
 type ModalState = { text: string; advance: boolean };
 
-function scrollToNext() {
-  const reduced = window.matchMedia(
-    "(prefers-reduced-motion: reduce)",
-  ).matches;
-  document.getElementById("telos")?.scrollIntoView({
-    behavior: reduced ? "auto" : "smooth",
-    block: "start",
-  });
+function goToClosing() {
+  // The closing thoughts (#telos) live at the end of the deck page. The sxolio
+  // challenge usually runs there, so scroll if it's on the page; otherwise (the
+  // standalone /challenge/sxolio) navigate to it.
+  const here = document.getElementById("telos");
+  if (here) {
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    here.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+    return;
+  }
+  window.location.href = "/prokliseis#telos";
 }
 
 export function ReflectiveComment() {
@@ -153,7 +158,7 @@ export function ReflectiveComment() {
               setModal(null);
               // Advance only on the deliberate "Το σκέφτηκα" of the composer
               // reflection — not on Escape / click-outside (those just close).
-              if (advance) scrollToNext();
+              if (advance) goToClosing();
             }}
             className="rounded-md border border-ink px-5 py-2 text-sm uppercase tracking-[0.15em] transition-colors hover:bg-ink hover:text-paper"
           >

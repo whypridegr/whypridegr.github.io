@@ -138,6 +138,49 @@
   --muted: oklch(0.95 0.015 250);
 }
 
+/* Smooth same-origin page navigations (Chrome MPA View Transitions). Keeps the
+   pure-MPA model — every page still does a real load, just animated. Other
+   browsers ignore this and navigate instantly. */
+@view-transition {
+  navigation: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* Scroll-handoff hint (HandoffSentinel): a quiet "keep scrolling" cue that
+   only fades in once the handoff is armed. Non-interactive. */
+.wp-handoff-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+  pointer-events: none;
+}
+.wp-handoff-hint.fixed {
+  transform: translateX(-50%) translateY(6px);
+}
+.wp-handoff-hint.is-armed {
+  opacity: 0.85;
+  transform: translateY(0);
+}
+.wp-handoff-hint.fixed.is-armed {
+  transform: translateX(-50%) translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .wp-handoff-hint {
+    transition: none;
+  }
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
@@ -821,74 +864,54 @@
 }
 
 /* ---- Deck (scroll-driven challenge zoom) -------------------------------- */
-/* Each desktop scene is a tall scroll region with a sticky stage. The stage
-   scales up to full size as the scene crosses the viewport centre and back,
-   driven entirely by the scroll position. No-ops (stays full-size) where
-   view-timeline is unsupported or motion is reduced. */
+/* Each desktop scene is at least one viewport tall and centres its content;
+   tall scenes grow and scroll naturally. The scaler scales the content up as
+   the scene arrives and back down only as it leaves — crucially it is NOT
+   pinned, so scrolling through a tall scene (e.g. three newspapers) does not
+   trigger the zoom-out mid-read. Gentle scale + wide plateau so it reads as
+   polish, not a lurch. No-ops where view() is unsupported or motion is reduced. */
 
 .deck-scene {
   position: relative;
-  /* Fallback (no scroll-linked animation): each scene is one viewport tall, so
-     scrollIntoView({block:"center"}) lands cleanly and there's no scale scrub.
-     Overridden to 180vh only where view() is supported (below). */
-  min-height: 100dvh;
-}
-
-.deck-stage {
-  position: sticky;
-  top: 0;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 6vh 1.5rem;
+  padding: 14vh 1.5rem 10vh;
+  /* Keep a target scene clear of the always-on chrome bar for anchor/keyboard
+     scrolls (programmatic scrolls compute their own offset). */
+  scroll-margin-top: 4rem;
 }
 
-/* The scaling wrapper around the scene content. */
 .deck-scaler {
   width: 100%;
   max-width: 64rem;
-  margin: 0 auto;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
     .deck-scene {
-      /* extra scroll length gives the scrub room to scale up and back */
-      min-height: 180vh;
       view-timeline-name: --deck-scene;
     }
     .deck-scaler {
       animation: deck-zoom both linear;
       animation-timeline: --deck-scene;
-      animation-range: entry 0% exit 100%;
+      /* `cover` = the scene's whole time overlapping the viewport, peaking when
+         it fills the screen. (entry/exit alone finished the zoom before the
+         scene centred, leaving it shrunk while you read.) */
+      animation-range: cover 0% cover 100%;
       transform-origin: 50% 50%;
     }
+    /* Scale up on the way in, hold full across the middle (so a tall scene
+       stays full-size while you scroll its content), then a pronounced zoom-out
+       on the way out — so finishing a challenge and moving to the next reads as
+       a deliberate hand-off, not a subtle drift. */
     @keyframes deck-zoom {
-      0%   { scale: 0.72; opacity: 0.35; }
-      35%, 65% { scale: 1; opacity: 1; }
-      100% { scale: 0.72; opacity: 0.35; }
+      0%   { scale: 0.6; opacity: 0.08; }
+      34%, 66% { scale: 1; opacity: 1; }
+      100% { scale: 0.6; opacity: 0.08; }
     }
   }
 }
 
-/* Mobile / swipe stage: one fullscreen card, transform-driven slide. */
-.deck-swiper {
-  position: relative;
-  min-height: 100dvh;
-  overflow: hidden;
-  touch-action: pan-y;
-}
-.deck-swipe-track {
-  display: flex;
-  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-@media (prefers-reduced-motion: reduce) {
-  .deck-swipe-track { transition: none; }
-}
-.deck-swipe-cell {
-  flex: 0 0 100%;
-  min-width: 100%;
-  padding: 8vh 1.25rem 12vh;
-}
