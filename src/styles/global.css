@@ -758,6 +758,18 @@
   aspect-ratio: 1.42 / 1;
   border-width: 3px;
 }
+/* When the hero box carries a real photo (not the hatch placeholder): keep the
+   newsprint frame, drop the engraving texture, and tone the image to match. */
+.telegraph .eng-photo {
+  position: relative;
+  border: 3px solid var(--tg-rule);
+  background: var(--tg-paper-lo);
+  margin: 6px auto 8px;
+  overflow: hidden;
+}
+.telegraph .eng-photo img {
+  filter: grayscale(1) contrast(1.05) sepia(0.12);
+}
 .telegraph .eng-ship {
   width: 100%;
   aspect-ratio: 1.7 / 1;
@@ -840,13 +852,13 @@
   .telegraph .col {
     padding: 14px 6px 4px;
   }
+  /* Keep the masthead on one line (Telegraph · Daily News) like desktop, just
+     scaled down to fit a phone; the crest placeholder is dropped for room. */
   .telegraph .nameplate {
-    grid-template-columns: 1fr;
-    gap: 0;
+    gap: 4px;
   }
-  .telegraph .nameplate h1.left,
-  .telegraph .nameplate h1.right {
-    text-align: center;
+  .telegraph .nameplate h1 {
+    font-size: clamp(15px, 6.8vw, 30px);
   }
   .telegraph .crest-main {
     display: none;

@@ -64,6 +64,12 @@ export function HandoffSentinel({
     ).matches;
     // Without the view-transition the jump is more jarring, so make it harder.
     const THRESHOLD = reduced ? 700 : 260;
+    // Touch needs a lower bar: a single finger-drag rarely reaches 260px before
+    // the lift, so scale to the viewport. Reduced-motion keeps the strict bar
+    // and leans on the visible CTA instead, to avoid surprise navigation.
+    const TOUCH_THRESHOLD = reduced
+      ? THRESHOLD
+      : Math.min(THRESHOLD, Math.round(window.innerHeight * 0.28));
     const KEY_STEP = 150; // ~2 deliberate key presses to cross the threshold
     const CD_KEY = "wp-handoff-cd";
 
@@ -74,6 +80,7 @@ export function HandoffSentinel({
     let lastY = window.scrollY;
     let dir: "up" | "down" = "down";
     let touchY: number | null = null;
+    let touchDecay: number | undefined;
 
     const cooldownOk = () => Date.now() > cooldownUntil;
 
@@ -98,7 +105,7 @@ export function HandoffSentinel({
       window.location.href = to;
     };
 
-    const addIntent = (dy: number) => {
+    const addIntent = (dy: number, threshold = THRESHOLD) => {
       if (!armed || fired || !cooldownOk()) return;
       if (dy <= 0) {
         accum = Math.max(0, accum + dy); // upward gestures bleed it back down
@@ -106,7 +113,7 @@ export function HandoffSentinel({
       }
       accum += dy;
       showHint();
-      if (accum >= THRESHOLD) trigger();
+      if (accum >= threshold) trigger();
     };
 
     // --- arming -------------------------------------------------------------
@@ -153,17 +160,28 @@ export function HandoffSentinel({
     window.addEventListener("wheel", onWheel, { passive: true });
 
     const onTouchStart = (e: TouchEvent) => {
+      window.clearTimeout(touchDecay); // a fresh pull keeps prior intent alive
+      if (e.touches.length > 1) {
+        touchY = null; // ignore pinch/multitouch
+        return;
+      }
       touchY = e.touches[0]?.clientY ?? null;
     };
     const onTouchMove = (e: TouchEvent) => {
-      if (touchY == null) return;
+      if (touchY == null || e.touches.length > 1) return;
       const y = e.touches[0]?.clientY ?? touchY;
-      addIntent(touchY - y); // swipe up = scroll down = positive intent
+      // swipe up = scroll down = positive intent; touch crosses the lower bar
+      addIntent(touchY - y, TOUCH_THRESHOLD);
       touchY = y;
     };
     const onTouchEnd = () => {
       touchY = null;
-      accum = 0; // require one deliberate pull; ignore post-lift momentum
+      // Don't drop intent instantly: a couple of deliberate swipes should add up.
+      // Post-lift inertial scroll fires no touchmove, so it can't push this over.
+      window.clearTimeout(touchDecay);
+      touchDecay = window.setTimeout(() => {
+        accum = 0;
+      }, 900);
     };
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: true });
@@ -202,6 +220,7 @@ export function HandoffSentinel({
     const onPageShow = (e: PageTransitionEvent) => {
       fired = false;
       setArmed(false);
+      window.clearTimeout(touchDecay);
       accum = 0;
       let stored = 0;
       try {
@@ -219,6 +238,7 @@ export function HandoffSentinel({
     cooldownUntil = Math.max(cooldownUntil, Date.now() + 400);
 
     return () => {
+      window.clearTimeout(touchDecay);
       io?.disconnect();
       window.removeEventListener("scroll", onBottom);
       window.removeEventListener("resize", onBottom);

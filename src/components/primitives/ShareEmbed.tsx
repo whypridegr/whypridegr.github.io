@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
+
+type Coords = { top: number; left: number; width: number };
 
 /**
  * Compact share + embed icons for a single challenge.
@@ -11,10 +14,63 @@ import { cn } from "@/lib/utils";
 export function ShareEmbed({ id, title }: { id: string; title: string }) {
   const [copied, setCopied] = useState<"link" | "embed" | null>(null);
   const [showEmbed, setShowEmbed] = useState(false);
+  const [coords, setCoords] = useState<Coords | null>(null);
+  const embedBtnRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   // The control can unmount on navigation; clear the pending reset so it never
   // fires setState on an unmounted component.
   const flashTimer = useRef<number | undefined>(undefined);
   useEffect(() => () => window.clearTimeout(flashTimer.current), []);
+
+  // Float the embed snippet in a fixed-position panel anchored to the button,
+  // portaled to <body>, so it never grows the deck's sticky control pill.
+  // Positioning mirrors Popover.tsx (viewport-clamped, repositions on scroll).
+  useEffect(() => {
+    if (!showEmbed) return;
+
+    const place = () => {
+      const el = embedBtnRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const margin = 8;
+      const width = Math.min(320, window.innerWidth - margin * 2);
+      let left = r.left + r.width / 2 - width / 2;
+      left = Math.max(margin, Math.min(left, window.innerWidth - width - margin));
+      // Flip above the button when there isn't room below it.
+      const estHeight = 132;
+      const below = r.bottom + 8;
+      const top =
+        below + estHeight > window.innerHeight - margin
+          ? Math.max(margin, r.top - 8 - estHeight)
+          : below;
+      setCoords({ top, left, width });
+    };
+    place();
+
+    const onScroll = () => place();
+    const onDoc = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (!embedBtnRef.current?.contains(t) && !panelRef.current?.contains(t)) {
+        setShowEmbed(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowEmbed(false);
+        embedBtnRef.current?.focus();
+      }
+    };
+    window.addEventListener("scroll", onScroll, true);
+    window.addEventListener("resize", onScroll);
+    document.addEventListener("click", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("scroll", onScroll, true);
+      window.removeEventListener("resize", onScroll);
+      document.removeEventListener("click", onDoc);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [showEmbed]);
 
   const origin = () =>
     typeof window === "undefined" ? "https://whypride.gr" : window.location.origin;
@@ -90,8 +146,12 @@ export function ShareEmbed({ id, title }: { id: string; title: string }) {
           </svg>
         </button>
         <button
+          ref={embedBtnRef}
           type="button"
-          onClick={onEmbed}
+          onClick={(e) => {
+            e.stopPropagation();
+            onEmbed();
+          }}
           aria-expanded={showEmbed}
           className={iconBtn}
           aria-label="Κώδικας ενσωμάτωσης"
@@ -117,24 +177,40 @@ export function ShareEmbed({ id, title }: { id: string; title: string }) {
         )}
       </div>
 
-      {showEmbed && (
-        <label className="mt-3 block">
-          <span className="text-xs text-muted-foreground">
-            Κώδικας ενσωμάτωσης (επικολλάται σε άρθρο ή ιστοσελίδα):
-          </span>
-          <textarea
-            readOnly
-            rows={3}
-            onFocus={(e) => e.currentTarget.select()}
-            value={embedCode()}
-            className={cn(
-              "mt-2 w-full resize-none rounded-md border border-border bg-card p-3",
-              "font-mono text-xs leading-relaxed text-foreground",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-            )}
-          />
-        </label>
-      )}
+      {showEmbed &&
+        coords &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            ref={panelRef}
+            style={{
+              position: "fixed",
+              top: coords.top,
+              left: coords.left,
+              width: coords.width,
+            }}
+            className="z-50 rounded-xl border border-border bg-popover p-3 text-left shadow-xl"
+          >
+            <label className="block">
+              <span className="text-xs text-muted-foreground">
+                Κώδικας ενσωμάτωσης (επικολλάται σε άρθρο ή ιστοσελίδα):
+              </span>
+              <textarea
+                readOnly
+                rows={3}
+                autoFocus
+                onFocus={(e) => e.currentTarget.select()}
+                value={embedCode()}
+                className={cn(
+                  "mt-2 w-full resize-none rounded-md border border-border bg-card p-3",
+                  "font-mono text-xs leading-relaxed text-foreground",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                )}
+              />
+            </label>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

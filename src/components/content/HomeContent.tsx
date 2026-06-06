@@ -42,6 +42,11 @@ export function HomeContent() {
         suppressKey="wp-deck-seen"
       />
 
+      {/* The scroll-handoff is unreliable on touch, so phones get an explicit
+          tap target. Mirrors the sentinel's suppressKey: once the deck's been
+          seen, the reference material below is meant to scroll freely. */}
+      <MobileHandoffCta suppressKey="wp-deck-seen" />
+
       {/* — Reference material: the calm, informative side of the home. Sits
           below the handoff, reachable once you're no longer being guided. — */}
       <section id="glossari" data-spy className="border-t border-border">
@@ -94,6 +99,35 @@ export function HomeContent() {
 
       <NextSectionButton />
     </>
+  );
+}
+
+// A visible, mobile-only handoff to the challenges. The swipe-based
+// HandoffSentinel rarely fires on touch, so phones get a plain link. Hidden on
+// sm+ (the guided scroll handles desktop) and once the deck has been seen.
+function MobileHandoffCta({ suppressKey }: { suppressKey: string }) {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem(suppressKey)) setShow(true);
+    } catch {
+      setShow(true); // private mode — treat as not-yet-seen
+    }
+  }, [suppressKey]);
+
+  if (!show) return null;
+  return (
+    <div className="flex justify-center px-6 pb-16 sm:hidden">
+      <a
+        href="/prokliseis"
+        className="inline-flex flex-col items-center gap-1 text-sm uppercase tracking-[0.2em] text-ink transition-colors hover:text-accent"
+      >
+        Συνέχισε στις προκλήσεις
+        <span aria-hidden className="text-xl leading-none">
+          ↓
+        </span>
+      </a>
+    </div>
   );
 }
 

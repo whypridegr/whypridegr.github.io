@@ -135,8 +135,14 @@ export function TelegraphSheet({ parallel }: { parallel: Parallel }) {
 
           {/* Centre column — the real story */}
           <section className="col col-center">
-            <div className="engraving eng-hero" aria-hidden="true">
-              <span className="tag">ΕΙΚΟΝΑ</span>
+            <div className="eng-hero eng-photo" aria-hidden="true">
+              <img
+                src="/Ujy1c.avif"
+                alt=""
+                loading="lazy"
+                decoding="async"
+                className="block h-full w-full object-cover"
+              />
             </div>
             <div className="kicker">
               <span className="lead">Τότε</span>
