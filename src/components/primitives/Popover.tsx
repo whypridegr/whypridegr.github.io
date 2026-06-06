@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
@@ -36,6 +37,11 @@ export function Popover({
 }) {
   const [open, setOpen] = useState(false);
   const [coords, setCoords] = useState<Coords | null>(null);
+  // Portal the panel to <body> so a transformed ancestor (e.g. the deck's
+  // scaler) can't become the containing block and shove the fixed panel off.
+  // Resolved in an effect so it stays null during SSR.
+  const [portalEl, setPortalEl] = useState<HTMLElement | null>(null);
+  useEffect(() => setPortalEl(document.body), []);
   const id = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const popRef = useRef<HTMLDivElement>(null);
@@ -120,27 +126,31 @@ export function Popover({
       >
         {label}
       </button>
-      <AnimatePresence>
-        {open && coords && (
-          <motion.div
-            ref={popRef}
-            id={id}
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 4 }}
-            transition={{ duration: 0.15 }}
-            style={{
-              position: "fixed",
-              top: coords.top,
-              left: coords.left,
-              width: coords.width,
-            }}
-            className="z-50 block max-h-[60vh] overflow-y-auto rounded-xl border border-border bg-popover p-4 text-left text-sm font-normal normal-case leading-relaxed tracking-normal text-popover-foreground shadow-xl"
-          >
-            {children}
-          </motion.div>
+      {portalEl &&
+        createPortal(
+          <AnimatePresence>
+            {open && coords && (
+              <motion.div
+                ref={popRef}
+                id={id}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 4 }}
+                transition={{ duration: 0.15 }}
+                style={{
+                  position: "fixed",
+                  top: coords.top,
+                  left: coords.left,
+                  width: coords.width,
+                }}
+                className="z-50 block max-h-[60vh] overflow-y-auto rounded-xl border border-border bg-popover p-4 text-left text-sm font-normal normal-case leading-relaxed tracking-normal text-popover-foreground shadow-xl"
+              >
+                {children}
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          portalEl,
         )}
-      </AnimatePresence>
     </>
   );
 }

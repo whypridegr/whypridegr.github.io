@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { ShareEmbed } from "@/components/primitives/ShareEmbed";
 import { cn } from "@/lib/utils";
 
@@ -39,7 +39,11 @@ const icon = {
   "aria-hidden": true,
 };
 
-export function DeckChrome({
+// Memoised so the parent's per-frame progress-bar updates don't re-render the
+// whole control bar; props from Deck are referentially stable (useCallback).
+export const DeckChrome = memo(DeckChromeImpl);
+
+function DeckChromeImpl({
   id,
   title,
   canPrev,

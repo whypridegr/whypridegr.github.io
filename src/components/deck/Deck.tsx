@@ -108,6 +108,11 @@ export function Deck() {
     goTo(pickRandomIndex(index, seen, LEN));
   }, [goTo, index, seen]);
 
+  // Stable identities so a scrollProgress-only re-render of Deck doesn't churn
+  // the memoised DeckChrome (they only change when the active index changes).
+  const onPrev = useCallback(() => goTo(prevIndex(index, LEN)), [goTo, index]);
+  const onNext = useCallback(() => goTo(nextIndex(index, LEN)), [goTo, index]);
+
   // Keyboard arrows for prev/next.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -159,8 +164,8 @@ export function Deck() {
           title={current.title}
           canPrev={index > 0}
           canNext={!isLastIndex(index, LEN)}
-          onPrev={() => goTo(prevIndex(index, LEN))}
-          onNext={() => goTo(nextIndex(index, LEN))}
+          onPrev={onPrev}
+          onNext={onNext}
           onRandom={onRandom}
           challenges={challenges}
           activeIndex={index}
@@ -174,8 +179,8 @@ export function Deck() {
           className="pointer-events-none absolute inset-x-4 bottom-[3px] h-[3px] overflow-hidden rounded-full bg-border/50"
         >
           <div
-            className="h-full rounded-full bg-accent transition-[width] duration-150 ease-out"
-            style={{ width: `${scrollProgress * 100}%` }}
+            className="h-full w-full origin-left rounded-full bg-accent transition-transform duration-150 ease-out"
+            style={{ transform: `scaleX(${scrollProgress})` }}
           />
         </div>
       </div>

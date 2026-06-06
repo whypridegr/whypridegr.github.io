@@ -849,8 +849,10 @@
     padding: 4.5rem 1rem 2.5rem;
   }
   .deck-scaler {
+    /* scale:none, not scale:1 — a value of 1 still establishes a transformed
+       containing block, which would re-anchor fixed-position popovers inside. */
     animation: none;
-    scale: 1;
+    scale: none;
     opacity: 1;
   }
   .telegraph .tg-grid {

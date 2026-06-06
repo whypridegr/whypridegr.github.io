@@ -1,8 +1,13 @@
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import type { Challenge } from "@/components/sections/challengeRegistry";
 import { DeckScene } from "@/components/deck/DeckScene";
 
-export function DeckScroll({
+// Memoised: the parent (Deck) re-renders on every scroll frame to advance the
+// progress bar, but its props here are referentially stable, so the 8-scene
+// list (and each challenge.render()) only reconciles when activeIndex changes.
+export const DeckScroll = memo(DeckScrollImpl);
+
+function DeckScrollImpl({
   challenges,
   activeIndex,
   onActiveChange,

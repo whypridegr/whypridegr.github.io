@@ -105,18 +105,13 @@ function render(
   ctx.fillStyle = BG;
   ctx.fillRect(0, 0, SIZE, SIZE);
 
-  // photo (circular cover-fit clip) or silhouette
+  // Full-bleed photo (no circular mask) so the whole picture shows; the pride
+  // ring then sits on top as a frame. Silhouette stays circular as a fallback.
   if (bitmap) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(CX, CY, RADIUS, 0, Math.PI * 2);
-    ctx.clip();
-    const d = RADIUS * 2;
-    const scale = Math.max(d / bitmap.width, d / bitmap.height);
+    const scale = Math.max(SIZE / bitmap.width, SIZE / bitmap.height);
     const w = bitmap.width * scale;
     const h = bitmap.height * scale;
-    ctx.drawImage(bitmap, CX - w / 2, CY - h / 2, w, h);
-    ctx.restore();
+    ctx.drawImage(bitmap, (SIZE - w) / 2, (SIZE - h) / 2, w, h);
   } else {
     drawSilhouette(ctx);
   }

@@ -120,11 +120,11 @@ function MobileHandoffCta({ suppressKey }: { suppressKey: string }) {
     <div className="flex justify-center px-6 pb-16 sm:hidden">
       <a
         href="/prokliseis"
-        className="inline-flex flex-col items-center gap-1 text-sm uppercase tracking-[0.2em] text-ink transition-colors hover:text-accent"
+        className="inline-flex items-center gap-2 rounded-full border border-ink px-5 py-3 text-sm uppercase tracking-[0.2em] text-ink transition-colors hover:bg-ink hover:text-paper"
       >
         Συνέχισε στις προκλήσεις
-        <span aria-hidden className="text-xl leading-none">
-          ↓
+        <span aria-hidden className="text-base leading-none">
+          →
         </span>
       </a>
     </div>

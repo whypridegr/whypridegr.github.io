@@ -23,6 +23,13 @@ export function DeckScene({
   // flash on remount. IO here is a one-shot mount trigger.
   useEffect(() => {
     if (variant !== "scroll" || mounted) return;
+    // Phones: mount eagerly. Lazy-mounting mid-scroll swaps the placeholder for
+    // taller content and shifts layout (CLS), which is the deck's scroll stutter.
+    // Desktop keeps the IO lazy-mount (no toolbar reflow, smoother there).
+    if (window.matchMedia("(max-width: 680px)").matches) {
+      setMounted(true);
+      return;
+    }
     const node = ref.current;
     if (!node) return;
     const io = new IntersectionObserver(
