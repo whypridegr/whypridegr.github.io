@@ -5,6 +5,10 @@ export type Parallel = {
   against: string;
   quote: string;
   modern: string;
+  /** Period photo shown in the newspaper's centre column. */
+  image: string;
+  /** object-position for the photo, when the subject isn't centred. */
+  imagePosition?: string;
   /** Historical primary/secondary source for the "Τότε" argument. */
   source?: Cite;
   /** A Greek contemporary echo of the same argument structure. */
@@ -21,6 +25,7 @@ export const parallels: Parallel[] = [
       "«Η θέση της γυναίκας είναι το σπίτι. Αν μπλέξει με την πολιτική, θα διαλυθεί η οικογένεια.»",
     modern:
       "«Αν τους αφήσουμε να παντρευτούν, θα διαλυθεί ο θεσμός της οικογένειας.»",
+    image: "/Ujy1c.avif",
     source: {
       note: "Στη δεκαετία του 1910, φυλλάδια κατά της ψήφου των γυναικών προειδοποιούσαν ότι θα γινόταν «καταστροφέας της οικογένειας», χρησιμοποιώντας τον ρόλο της μητέρας ως επιχείρημα.",
       links: [
@@ -50,6 +55,7 @@ export const parallels: Parallel[] = [
     quote:
       "«Είναι αφύσικο. Δεν είναι αυτό που όρισε η φύση. Και σκεφτείτε τι θα τραβήξουν τα παιδιά.»",
     modern: "«Είναι αφύσικο. Και σκεφτείτε τι θα τραβήξουν τα παιδιά.»",
+    image: "/loving.webp",
     source: {
       note: "Πριν το 1967, οι διαφυλετικοί γάμοι χαρακτηρίζονταν «αφύσικοι» και απαγορεύονταν με νόμο. Στην υπόθεση Loving v. Virginia, ο δικαστής υποστήριξε ότι ο Θεός διαχώρισε τις φυλές και δεν προόριζε την ανάμειξή τους. Συνηθισμένο ήταν και το επιχείρημα ότι θα υπέφεραν τα παιδιά. Το Ανώτατο Δικαστήριο των ΗΠΑ το απέρριψε ομόφωνα το 1967.",
       links: [
@@ -83,6 +89,7 @@ export const parallels: Parallel[] = [
     quote:
       "«Ας κάνουν ό,τι θέλουν στο σπίτι τους, αρκεί να μην το διαφημίζουν δημόσια.»",
     modern: "«Ας κάνουν ό,τι θέλουν, αρκεί να μην το βγάζουν στους δρόμους.»",
+    image: "/decriminalization.avif",
     source: {
       note: "Η λογική «ιδιωτικά ναι, δημόσια όχι» έχει νομικό ανάλογο. Η βρετανική αποποινικοποίηση του 1967 ίσχυε μόνο κατ' ιδίαν, ενώ το 1988 το Section 28 απαγόρευσε στα σχολεία να «προωθούν» την ομοφυλοφιλία.",
       links: [

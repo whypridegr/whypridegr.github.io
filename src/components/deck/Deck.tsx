@@ -153,7 +153,7 @@ export function Deck() {
       {/* A centered, always-on control island. Kept narrow (w-fit) and inset
           from the edges so it sits in the central gap and never falls under the
           floating header controls (menu/theme/info) tucked into the corners. */}
-      <div className="sticky top-2 z-30 mx-auto w-fit max-w-[calc(100%-7rem)] rounded-full border border-border bg-paper/85 px-2 py-1.5 shadow-sm backdrop-blur relative">
+      <div className="sticky top-1 sm:top-2 z-30 mx-auto w-fit max-w-[calc(100%-7rem)] rounded-full border border-border bg-paper/85 px-1.5 py-1 sm:px-2 sm:py-1.5 shadow-sm backdrop-blur relative">
         <DeckChrome
           id={current.id}
           title={current.title}

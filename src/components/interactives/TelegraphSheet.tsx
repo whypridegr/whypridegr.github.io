@@ -137,10 +137,11 @@ export function TelegraphSheet({ parallel }: { parallel: Parallel }) {
           <section className="col col-center">
             <div className="eng-hero eng-photo" aria-hidden="true">
               <img
-                src="/Ujy1c.avif"
+                src={parallel.image}
                 alt=""
                 loading="lazy"
                 decoding="async"
+                style={{ objectPosition: parallel.imagePosition ?? "center" }}
                 className="block h-full w-full object-cover"
               />
             </div>

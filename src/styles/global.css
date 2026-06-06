@@ -180,6 +180,13 @@
     transition: none;
   }
 }
+/* On phones the visible CTA replaces this scroll hint; hide the duplicate. The
+   :not(.fixed) keeps the bottom-mode (fixed) hint, which has no CTA twin. */
+@media (max-width: 639px) {
+  .wp-handoff-hint:not(.fixed) {
+    display: none;
+  }
+}
 
 @layer base {
   * {
@@ -834,6 +841,18 @@
 }
 
 @media (max-width: 680px) {
+  /* Phones: no scroll-zoom. Top-align each scene with tight padding so the
+     content gets the room (and clears the shrunk sticky control bar), and hard-
+     reset the scaler so no stale transform/scale leaks in from the cascade. */
+  .deck-scene {
+    justify-content: flex-start;
+    padding: 4.5rem 1rem 2.5rem;
+  }
+  .deck-scaler {
+    animation: none;
+    scale: 1;
+    opacity: 1;
+  }
   .telegraph .tg-grid {
     grid-template-columns: 1fr;
   }
@@ -885,7 +904,10 @@
 
 .deck-scene {
   position: relative;
-  min-height: 100dvh;
+  /* svh, not dvh: on mobile the dynamic viewport changes as the browser toolbar
+     hides/shows during scroll, which reflowed every scene mid-scroll and made
+     the deck "jump up by itself". svh is the stable small-viewport height. */
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -901,7 +923,9 @@
   max-width: 64rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
+/* Desktop only: the scroll-driven zoom is too janky on phones (toolbar reflow +
+   partial-scale-on-stop), so on mobile scenes stay full-size and just scroll. */
+@media (prefers-reduced-motion: no-preference) and (min-width: 681px) {
   @supports (animation-timeline: view()) {
     .deck-scene {
       view-timeline-name: --deck-scene;

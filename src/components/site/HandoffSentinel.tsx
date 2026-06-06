@@ -259,7 +259,9 @@ export function HandoffSentinel({
       className={
         mode === "bottom"
           ? "wp-handoff-hint fixed bottom-5 left-1/2 z-30 -translate-x-1/2"
-          : "wp-handoff-hint"
+          : // Hidden on phones via CSS (.wp-handoff-hint media query): the visible
+            // CTA replaces it there, since the swipe handoff is unreliable on touch.
+            "wp-handoff-hint"
       }
     >
       <span className="text-[0.7rem] uppercase tracking-[0.2em] text-muted-foreground">
@@ -282,7 +284,9 @@ export function HandoffSentinel({
       className={
         mode === "bottom"
           ? "h-px w-full"
-          : "flex min-h-[42vh] flex-col items-center justify-center gap-2"
+          : // Tall runway on desktop (the swipe handoff needs the room); collapsed
+            // on mobile, where the visible CTA below does the job instead.
+            "flex min-h-[14vh] sm:min-h-[42vh] flex-col items-center justify-center gap-2"
       }
     >
       {hint}

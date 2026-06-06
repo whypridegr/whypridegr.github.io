@@ -25,12 +25,12 @@ export type DeckChromeProps = {
 // One compact control. The text label collapses on narrow screens so the
 // island stays small; the icon always shows and stays legible.
 const ctrl =
-  "inline-flex items-center gap-1.5 rounded-full p-2.5 sm:px-3.5 sm:py-2 text-xs uppercase tracking-[0.18em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-30 disabled:pointer-events-none";
+  "inline-flex items-center gap-1.5 rounded-full p-2 sm:px-3.5 sm:py-2 text-xs uppercase tracking-[0.18em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-30 disabled:pointer-events-none";
 
 // Shared inline-SVG props — matches the repo's hand-rolled icon style.
 const icon = {
   viewBox: "0 0 24 24",
-  className: "size-5",
+  className: "size-4 sm:size-5",
   fill: "none",
   stroke: "currentColor",
   strokeWidth: 1.7,
