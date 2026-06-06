@@ -641,6 +641,14 @@
     transform: translateX(-50%);
   }
 }
+/* The newspaper ticker keeps scrolling even under Reduce Motion: it carries the
+   "τότε / σήμερα" comparison, so a static rail would lose content. Tightly scoped
+   override of the global reduce-motion kill-switch (animation-duration: 0.001ms). */
+@media (prefers-reduced-motion: reduce) {
+  .telegraph .ticker .track {
+    animation: tg-scroll 46s linear infinite !important;
+  }
+}
 
 .telegraph .tg-grid {
   display: grid;

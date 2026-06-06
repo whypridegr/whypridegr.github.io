@@ -12,6 +12,10 @@ const B = 2;
 const MAX_STEPS = 200;
 const MAX_RUN_MS = 12000; // hard wall-clock cap so a high threshold can't run forever
 const STAGNATION_STEPS = 12; // stop once the segregation metric stops moving
+// Discrete, tap-to-select thresholds (no drag). Kept inside 30–60% so the demo
+// always settles into a legible split rather than the extremes.
+const THRESHOLDS = [0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6];
+const DEFAULT_THRESHOLD = 0.35;
 
 function makeGrid(): number[] {
   return Array.from({ length: SIZE }, () => {
@@ -113,11 +117,13 @@ function step(
 
 export function SegregationSandbox() {
   const nb = useMemo(buildNeighbors, []);
-  const [threshold, setThreshold] = useState(0.35);
+  const [threshold, setThreshold] = useState(DEFAULT_THRESHOLD);
   const [grid, setGrid] = useState<number[]>(makeGrid);
   const [running, setRunning] = useState(false);
-  const [reduced, setReduced] = useState(false);
   const [done, setDone] = useState(false);
+  // Bumped on every threshold pick so the run effect restarts cleanly on a fresh
+  // grid — even when the same percentage is tapped twice.
+  const [runId, setRunId] = useState(0);
   // The conclusion shows as a modal once the simulation settles. Tied to `done`
   // so it pops once per completed run (the first auto-run, then any deliberate
   // re-run) rather than nagging on every state change.
@@ -128,37 +134,21 @@ export function SegregationSandbox() {
 
   const seg = useMemo(() => segregation(grid, nb), [grid, nb]);
 
-  // Surface the conclusion modal whenever a run settles. The simulation only
-  // runs when the visitor presses "Τρέξε" — it never auto-starts, so the modal
-  // never pops uninvited the moment the scene scrolls into view.
+  // Surface the conclusion modal whenever a run settles. A run only starts on a
+  // deliberate action (picking a percentage or pressing "Τρέξε") — never on
+  // scroll-into-view, so the modal never pops uninvited.
   useEffect(() => {
     if (done) setShowConclusion(true);
   }, [done]);
 
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(mq.matches);
-    const onChange = (e: MediaQueryListEvent) => setReduced(e.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
-
-  useEffect(() => {
     if (!running) return;
 
-    if (reduced) {
-      let g = gridRef.current;
-      for (let s = 0; s < 200; s++) {
-        const r = step(g, nb, threshold);
-        g = r.next;
-        if (r.moved === 0) break;
-      }
-      setGrid(g);
-      setRunning(false);
-      setDone(true);
-      return;
-    }
-
+    // Always animate the run at a readable cadence — even under
+    // prefers-reduced-motion. This is an opt-in, user-triggered educational
+    // simulation (it only starts on "Τρέξε"), so watching the split form IS the
+    // content; collapsing it to an instant jump defeats the point. The bounds
+    // below still guarantee it terminates.
     let steps = 0;
     let stagnant = 0;
     let prevSeg = segregation(gridRef.current, nb);
@@ -187,21 +177,17 @@ export function SegregationSandbox() {
       }
     }, 220);
     return () => clearInterval(id);
-  }, [running, reduced, threshold, nb]);
+  }, [running, threshold, runId, nb]);
 
-  const toggleRun = () => {
-    if (running) {
-      setRunning(false);
-    } else {
-      setDone(false);
-      setRunning(true);
-    }
-  };
-
-  const reshuffle = () => {
-    setRunning(false);
+  // Picking a percentage does the whole thing in one tap: fresh grid + run. Many
+  // visitors didn't realise they had to press "Τρέξε" after choosing, so the
+  // choice itself now starts the simulation.
+  const pickThreshold = (v: number) => {
+    setThreshold(v);
     setDone(false);
     setGrid(makeGrid());
+    setRunId((n) => n + 1);
+    setRunning(true);
   };
 
   return (
@@ -242,75 +228,37 @@ export function SegregationSandbox() {
       {/* Controls */}
       <div className="space-y-6 lg:sticky lg:top-24">
         <div>
-          <label
-            htmlFor="seg-threshold"
-            className="block text-sm leading-relaxed"
-          >
+          <span id="seg-threshold-label" className="block text-sm leading-relaxed">
             Πόσο «όμοιους» γείτονες θέλει το κάθε ανθρωπάκι;
-          </label>
+          </span>
           <div className="mt-1 font-display text-3xl text-accent">
             {Math.round(threshold * 100)}%
           </div>
-          <input
-            id="seg-threshold"
-            type="range"
-            min={0}
-            max={0.8}
-            step={0.05}
-            value={threshold}
-            onChange={(e) => setThreshold(Number(e.target.value))}
-            className="mt-2 w-full accent-accent"
-          />
-        </div>
-
-        <div className="flex flex-wrap gap-3">
-          <button
-            onClick={toggleRun}
-            className="inline-flex items-center gap-2 rounded-md bg-ink px-4 py-2 text-sm uppercase tracking-[0.15em] text-paper transition-colors hover:bg-accent"
+          <div
+            role="group"
+            aria-labelledby="seg-threshold-label"
+            className="mt-2 flex flex-wrap gap-2"
           >
-            {running ? (
-              <svg
-                viewBox="0 0 24 24"
-                className="size-4"
-                fill="currentColor"
-                aria-hidden
+            {THRESHOLDS.map((v) => (
+              <button
+                key={v}
+                type="button"
+                onClick={() => pickThreshold(v)}
+                aria-pressed={threshold === v}
+                className={cn(
+                  "rounded-md border px-3 py-1.5 text-sm tabular-nums transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
+                  threshold === v
+                    ? "border-accent bg-accent text-paper"
+                    : "border-border hover:border-ink",
+                )}
               >
-                <rect x="6" y="5" width="4" height="14" rx="1" />
-                <rect x="14" y="5" width="4" height="14" rx="1" />
-              </svg>
-            ) : (
-              <svg
-                viewBox="0 0 24 24"
-                className="size-4"
-                fill="currentColor"
-                aria-hidden
-              >
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            )}
-            {running ? "Παύση" : "Τρέξε"}
-          </button>
-          <button
-            onClick={reshuffle}
-            className="inline-flex items-center gap-2 rounded-md border border-ink px-4 py-2 text-sm uppercase tracking-[0.15em] transition-colors hover:bg-ink hover:text-paper"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              className="size-4"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden
-            >
-              <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
-              <path d="M21 3v5h-5" />
-              <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
-              <path d="M3 21v-5h5" />
-            </svg>
-            Ανακάτεψε
-          </button>
+                {Math.round(v * 100)}%
+              </button>
+            ))}
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Διάλεξε ένα ποσοστό και η προσομοίωση ξεκινά αμέσως.
+          </p>
         </div>
 
         <div className="border-t border-border pt-4">
