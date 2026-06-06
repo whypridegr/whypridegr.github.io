@@ -11,6 +11,12 @@ interface Props {
   ogDescription?: string;
   /** One or more schema.org objects, emitted as JSON-LD in <head>. */
   structuredData?: Record<string, unknown> | Record<string, unknown>[];
+  /**
+   * Trail from the home page to here, e.g. [{ name: "Προκλήσεις", path: "/prokliseis" }].
+   * Emitted as a BreadcrumbList; "Αρχική" → "/" is prepended automatically.
+   * Leave unset on the home page.
+   */
+  breadcrumbs?: { name: string; path: string }[];
 }
 
 const {
@@ -19,13 +25,38 @@ const {
   ogTitle = title,
   ogDescription = description,
   structuredData,
+  breadcrumbs,
 } = Astro.props;
 
-const jsonLdBlocks = structuredData
+// Match the canonical/sitemap URL shape (directory build → trailing slash).
+const absUrl = (path: string) =>
+  new URL(path.endsWith("/") ? path : `${path}/`, Astro.site).href;
+
+const breadcrumbBlock =
+  breadcrumbs && breadcrumbs.length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [{ name: "Αρχική", path: "/" }, ...breadcrumbs].map(
+          (b, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: b.name,
+            item: absUrl(b.path),
+          }),
+        ),
+      }
+    : null;
+
+const extraBlocks = structuredData
   ? Array.isArray(structuredData)
     ? structuredData
     : [structuredData]
   : [];
+const jsonLdBlocks = [
+  ...(breadcrumbBlock ? [breadcrumbBlock] : []),
+  ...extraBlocks,
+];
 
 // Escape "<" so a stray "</script>" inside content can't break out of the tag.
 const toJsonLd = (block: Record<string, unknown>) =>

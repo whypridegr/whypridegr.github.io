@@ -15,6 +15,13 @@ const { id } = Astro.params;
 const { title, blurb } = Astro.props;
 ---
 
-<Layout title={`${title} | WhyPride.gr`} description={blurb}>
+<Layout
+  title={`${title} | WhyPride.gr`}
+  description={blurb}
+  breadcrumbs={[
+    { name: "Προκλήσεις", path: "/prokliseis" },
+    { name: title, path: `/challenge/${id}` },
+  ]}
+>
   <ChallengePage id={id} client:load />
 </Layout>

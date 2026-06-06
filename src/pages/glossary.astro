@@ -1,12 +1,28 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { GlossaryContent } from "../components/content/GlossaryContent";
+import { glossary } from "../content/glossary";
+
+// Glossary as a schema.org term set, built from the same content the page
+// renders — helps search engines treat each entry as a defined term.
+const termSetSchema = {
+  "@context": "https://schema.org",
+  "@type": "DefinedTermSet",
+  name: "Γλωσσάρι ΛΟΑΤΚΙ+ όρων",
+  hasDefinedTerm: glossary.map((g) => ({
+    "@type": "DefinedTerm",
+    name: g.term,
+    description: g.short,
+  })),
+};
 ---
 
 <Layout
   title="Γλωσσάρι | WhyPride.gr"
   description="Όροι της ΛΟΑΤΚΙ+ κοινότητας εξηγημένοι ξεκάθαρα και χωρίς όρους εκπόρθησης."
   ogDescription="Λέξεις, ορισμοί, χωρίς θόρυβο."
+  structuredData={termSetSchema}
+  breadcrumbs={[{ name: "Γλωσσάρι", path: "/glossary" }]}
 >
   <GlossaryContent client:idle />
 </Layout>
